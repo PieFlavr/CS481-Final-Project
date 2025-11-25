@@ -51,28 +51,7 @@ public class AudioManager : MonoBehaviour
         Instance = this;
         DontDestroyOnLoad(gameObject);
 
-        // Building lookup dicts for quick access
-        sfxLibrary = new Dictionary<string, SFXData>();
-        bgmLibrary = new Dictionary<string, BGMData>();
-
-        foreach (SFXData sfx in sfxAssets)
-        {
-            sfxLibrary[sfx.id] = sfx;
-        } 
-        foreach (BGMData bgm in bgmAssets)
-        {
-            bgmLibrary[bgm.id] = bgm;
-        }
-
-        // Initializing SFX AudioSource pool
-        sfxPool = new List<AudioSource>();
-        for (int i = 0; i < sfxPoolSize; i++)
-        {
-            AudioSource sfxSource = Instantiate(sfxSourcePrefab, transform);
-            sfxSource.playOnAwake = false; // Since we're pooling, this is off
-            sfxPool.Add(sfxSource);
-        }
-
+        InitializeSources();
         UpdateVolumes();
     }
 
@@ -256,5 +235,29 @@ public class AudioManager : MonoBehaviour
         // }
     }
 
+    private void InitializeSources()
+    {
+        // Building lookup dicts for quick access
+        sfxLibrary = new Dictionary<string, SFXData>();
+        bgmLibrary = new Dictionary<string, BGMData>();
+
+        foreach (SFXData sfx in sfxAssets)
+        {
+            sfxLibrary[sfx.id] = sfx;
+        } 
+        foreach (BGMData bgm in bgmAssets)
+        {
+            bgmLibrary[bgm.id] = bgm;
+        }
+
+        // Initializing SFX AudioSource pool
+        sfxPool = new List<AudioSource>();
+        for (int i = 0; i < sfxPoolSize; i++)
+        {
+            AudioSource sfxSource = Instantiate(sfxSourcePrefab, transform);
+            sfxSource.playOnAwake = false; // Since we're pooling, this is off
+            sfxPool.Add(sfxSource);
+        }
+    }
     #endregion Private Utils
 }
