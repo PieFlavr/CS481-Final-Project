@@ -16,12 +16,12 @@ public class GameManager : MonoBehaviour
         Debug.Log("[GameManager] Hello World!");
         if (Instance != null && Instance != this)
         {
-            Debug.LogWarning("[GameManager] Duplicate instance detected -- annihilatin it now!");
-            Destroy(this.gameObject);
+            Debug.LogWarning("[GameManager] Duplicate instance detected -- annihilating it now!");
+            Destroy(gameObject);
             return;
         }
         Instance = this;
-        DontDestroyOnLoad(this.gameObject);
+        DontDestroyOnLoad(gameObject);
         Initialize();
     }
 
