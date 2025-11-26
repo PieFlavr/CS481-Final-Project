@@ -22,7 +22,7 @@ public class AudioManager : MonoBehaviour
     [SerializeField] private int sfxPoolSize = 30;
 
     [Header("Audio Assets")]    // All audio are stored as SOs -- just easier to manage + work together -L
-    public SFXData[] sfxAssets; // See AudioData.cs for the actual SO definitions!
+    public SFXData[] sfxAssets; // See SFXData.cs and BGMData.cs for the actual SO definitions!
     public BGMData[] bgmAssets;
 
     private Dictionary<string, SFXData> sfxLibrary;
