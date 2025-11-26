@@ -9,7 +9,7 @@ public class UIManager : MonoBehaviour
 
     [Header("UI Panels")]
     [SerializeField] private List<UIPanel> panels = new List<UIPanel>(); // Must add panels in inspector
-    
+    [SerializeField] private Transform uiRoot;
     private Dictionary<string, UIPanel> panelLibrary = new Dictionary<string, UIPanel>();
     private Stack<UIPanel> navigationStack = new Stack<UIPanel>();
     private UIPanel currentOverlayPanel;
@@ -31,7 +31,8 @@ public class UIManager : MonoBehaviour
         Instance = this;
         DontDestroyOnLoad(gameObject);
 
-        InitializePanels();
+        InitializeInpsectorPanels();
+        InitializeScenePanels();
     }
     
     #endregion
@@ -180,7 +181,15 @@ public class UIManager : MonoBehaviour
         }
         return false;
     }
-
+    
+    /// <summary>
+    /// Checks if there is any overlay panel currently open.
+    /// </summary>
+    /// <returns>True if an overlay panel is open; otherwise, false.</returns>
+    public bool HasOpenOverlay()
+    {
+        return currentOverlayPanel != null;
+    }
     #endregion Accessors
 
 
@@ -211,31 +220,63 @@ public class UIManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Initializes all UI panels and builds the panel library.
+    /// Registers all UIPanels found in the scene under the uiRoot.
     /// </summary>
-    private void InitializePanels()
+    private void InitializeInpsectorPanels()
     {
-        Debug.Log("[UIManager] Initializing UI Panels...");
+        Debug.Log("[UIManager] Initializing Inspector UI Panels...");
         panelLibrary.Clear();
         navigationStack.Clear();
         
+        // Inspector Assigned panels
         foreach (var panel in panels)
         {
-            if (panel != null)
+            if (panel != null && !panelLibrary.ContainsKey(panel.PanelName))
             {
-                panel.Initialize();
-                if (!panelLibrary.ContainsKey(panel.PanelName))
-                {
-                    panelLibrary.Add(panel.PanelName, panel);
-                    panel.Hide(); // Start hidden
-                }
-                else
-                {
-                    Debug.LogWarning($"[UIManager] Duplicate panel name detected: {panel.PanelName}");
-                }
+                RegisterPanel(panel);
             }
+            else
+            {
+                Debug.LogWarning($"[UIManager] Duplicate inspector panel name detected: {panel.PanelName}");
+            }
+            
         }
         Debug.Log("[UIManager] UI Panels initialization complete.");
+    }
+
+    /// <summary>
+    /// Initializes all UIPanels found in the scene under the uiRoot.
+    /// </summary>
+    private void InitializeScenePanels()
+    {
+        if (uiRoot == null) return;
+
+        Debug.Log("[UIManager] Initializing Scene UI Panels...");
+
+        UIPanel[] panels = uiRoot.GetComponentsInChildren<UIPanel>(true);
+        foreach (var panel in panels)
+        {
+            if (panel != null && !panelLibrary.ContainsKey(panel.PanelName))
+            {
+                RegisterPanel(panel);
+            }
+            else
+            {
+                Debug.LogWarning($"[UIManager] Duplicate scene panel name detected: {panel.PanelName}");
+            }
+        }
+    }
+
+    /// <summary>
+    /// Registers a UIPanel by initializing and hiding it, then adding it to the panel library.
+    /// </summary>
+    /// <param name="panel">The UIPanel to register.</param>
+    private void RegisterPanel(UIPanel panel)
+    {
+        Debug.Log($"[UIManager] Registering panel: {panel.PanelName}");
+        panel.Initialize();
+        panelLibrary.Add(panel.PanelName, panel);
+        panel.Hide();
     }
 
     #endregion
