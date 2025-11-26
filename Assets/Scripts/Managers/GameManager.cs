@@ -22,14 +22,22 @@ public class GameManager : MonoBehaviour
         }
         Instance = this;
         DontDestroyOnLoad(gameObject);
+
         Initialize();
+    }
+
+    void Start()
+    {
+        SubscribeToInputs();
+        AudioManager.Instance.PlayBGM("TestBGM");
     }
 
     void Initialize()
     {
-        State = GameState.Boot;
+        State = GameState.Playing;
         // TODO: Add other initialization logic here -L
     }
+    
     #endregion Unity Methods
     
 
@@ -59,6 +67,49 @@ public class GameManager : MonoBehaviour
     /// The event provides the new <see cref="GameState"/> as its parameter.</remarks>
     public event Action<GameState> OnGameStateChanged;  // Discovered this recently its awesome -L
     #endregion State Management
+
+
+
+    #region Input Handling
+
+    private void SubscribeToInputs()
+    {
+        InputManager.Instance.OnBack += HandleBackInput;
+        InputManager.Instance.OnPause += HandlePauseInput;
+    }
+
+    private void HandleBackInput()
+    {
+        Debug.Log("[GameManager] Back input received.");
+        if (UIManager.Instance.HasOpenOverlay())
+        {
+            UIManager.Instance.GoBack();
+
+            // NOTE (L): Repeated twice in HandlePauseInput() for a reason
+            // This is because in the case "Back" and "Pause" are different binds :P. -L
+            
+            if (State == GameState.Paused && !UIManager.Instance.IsPanelOpen("PauseMenu"))
+            {
+                ChangeState(GameState.Playing);
+            }
+        }
+    }
+
+    private void HandlePauseInput()
+    {
+        Debug.Log("[GameManager] Pause input received.");
+        if (State == GameState.Playing)
+        {
+            UIManager.Instance.OpenPanel("PauseMenu");
+            ChangeState(GameState.Paused);
+        } else if (State == GameState.Paused && UIManager.Instance.IsPanelOpen("PauseMenu"))
+        {
+            UIManager.Instance.ClosePanel("PauseMenu");
+            ChangeState(GameState.Playing);
+        }
+    }
+
+    #endregion Input Handling
 }
 
 public enum GameState

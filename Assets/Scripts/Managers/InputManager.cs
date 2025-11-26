@@ -13,12 +13,15 @@ public class InputManager : MonoBehaviour
     
     private InputSystem_Actions inputActions;
 
-    // Events
+    #region Events
     // public event Action<Vector2> OnMove; //TODO: Implement movement input w/ player controller. -L
     // public event Action<Vector2> OnLook;
     // public event Action OnDash;
     public event Action OnInteract;
     public event Action OnPause;
+    public event Action OnBack;
+
+    #endregion Events
 
     // Public Properties
     public Vector2 MoveInput { get; private set; }
@@ -45,12 +48,10 @@ public class InputManager : MonoBehaviour
         inputActions = new InputSystem_Actions();
         SubscribeToInputs();
     }
-    #endregion Unity Methods
 
-    #region Enable / Disable
     private void OnEnable() => inputActions.Enable();
     private void OnDisable() => inputActions.Disable();
-    #endregion Enable / Disable
+    #endregion Unity Methods
 
     #region Input Subscriptions
     /// <summary>
@@ -61,6 +62,8 @@ public class InputManager : MonoBehaviour
         // Add input subscriptions here... (preferably group em' too)
         inputActions.Player.Interact.performed += context => OnInteract?.Invoke();
         inputActions.Player.Pause.performed += context => OnPause?.Invoke();
+
+        inputActions.UI.Back.performed += context => OnBack?.Invoke();
     }
 
     public void EnableGameplayInput()
@@ -81,6 +84,8 @@ public class InputManager : MonoBehaviour
     {
         inputActions.Player.Interact.performed -= context => OnInteract?.Invoke();
         inputActions.Player.Pause.performed -= context => OnPause?.Invoke();
+
+        inputActions.UI.Back.performed -= context => OnBack?.Invoke();
     }
     #endregion Cleanup
 }
