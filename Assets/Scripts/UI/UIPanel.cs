@@ -4,8 +4,8 @@ using UnityEngine;
 public abstract class UIPanel : MonoBehaviour
 {
     #region Fields and Properties
-    [SerializeField] private string panelName;
-    [SerializeField] private UILayer layer = UILayer.Default; 
+    [SerializeField] protected string panelName;
+    [SerializeField] protected UILayer layer = UILayer.Default; 
     // NOTE (L): Was heavily debating this layer enum
     // Wanted stacking behavior but also wanted to allow for coexisting panels (HUD + notifcations, etc.)
     // And other possible layering behaviors I don't even know about yet.
@@ -15,7 +15,7 @@ public abstract class UIPanel : MonoBehaviour
     public UILayer Layer => layer;
     protected CanvasGroup canvasGroup;
 
-    private bool isVisible;
+    private bool isVisible = true;
     public bool IsVisible => isVisible;
     
     public event System.Action OnShown;
@@ -49,6 +49,7 @@ public abstract class UIPanel : MonoBehaviour
     #endregion Panel Control
 
 
+
     #region Panel Behavior Methods
 
     /// <summary>
@@ -69,6 +70,7 @@ public abstract class UIPanel : MonoBehaviour
     /// </summary>
     protected virtual void OnPanelHide()
     {
+        Debug.Log($"[UIPanel] Hiding panel: {panelName}");
         isVisible = false;
         canvasGroup.alpha = 0f;
         SetInteractable(false);
@@ -79,6 +81,8 @@ public abstract class UIPanel : MonoBehaviour
     {
         if(canvasGroup != null) return; // Already initialized
         canvasGroup = GetComponent<CanvasGroup>();
+        Debug.Log($"[UIPanel] Initializing panel: {panelName}");
+        Debug.Log($"[UIPanel] - CanvasGroup named {canvasGroup.name} found.");
         if(canvasGroup == null)
         {
             Debug.LogError($"[UIPanel] CanvasGroup component missing on panel {panelName}!");
