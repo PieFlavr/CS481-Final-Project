@@ -83,6 +83,7 @@ public class GameManager : MonoBehaviour
         Debug.Log("[GameManager] Back input received.");
         if (UIManager.Instance.HasOpenOverlay())
         {
+            Debug.Log("[GameManager] Closing top overlay panel.");
             UIManager.Instance.GoBack();
 
             // NOTE (L): Repeated twice in HandlePauseInput() for a reason
@@ -102,7 +103,8 @@ public class GameManager : MonoBehaviour
         {
             UIManager.Instance.OpenPanel("PauseMenu");
             ChangeState(GameState.Paused);
-        } else if (State == GameState.Paused && UIManager.Instance.IsPanelOpen("PauseMenu"))
+        } 
+        else if (State == GameState.Paused && UIManager.Instance.IsPanelOpen("PauseMenu"))
         {
             UIManager.Instance.ClosePanel("PauseMenu");
             ChangeState(GameState.Playing);
