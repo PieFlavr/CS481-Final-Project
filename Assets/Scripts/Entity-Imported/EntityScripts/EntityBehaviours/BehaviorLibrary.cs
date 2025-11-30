@@ -47,18 +47,18 @@ public class FleeFromPlayerBehavior : EntityBehaviorBase
     }
 }
 
-[System.Serializable]
-public class ShootSpellBehavior : EntityBehaviorBase
-{
-    [Tooltip("Which spell slot to cast")]
-    public int spellSlot = 0;
+// [System.Serializable]
+// public class ShootSpellBehavior : EntityBehaviorBase
+// {
+//     [Tooltip("Which spell slot to cast")]
+//     public int spellSlot = 0;
 
-    public override void Execute(Entity entity, EntityController controller, float deltaTime)
-    {
-        if (cachedTarget != null)
-            controller.CastSpellAtTarget(spellSlot, cachedTarget);
-    }
-}
+//     public override void Execute(Entity entity, EntityController controller, float deltaTime)
+//     {
+//         if (cachedTarget != null)
+//             controller.CastSpellAtTarget(spellSlot, cachedTarget);
+//     }
+// }
 
 [System.Serializable]
 public class IdleBehavior : EntityBehaviorBase

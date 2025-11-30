@@ -13,7 +13,7 @@ public class EntityController : MonoBehaviour
 
     protected Entity entity;
     protected Rigidbody2D body;
-    protected EntitySpellCaster spellCaster;
+    // protected EntitySpellCaster spellCaster;
 
     #endregion
 
@@ -72,7 +72,7 @@ public class EntityController : MonoBehaviour
     {
         entity = GetComponent<Entity>();
         body = GetComponent<Rigidbody2D>();
-        spellCaster = GetComponent<EntitySpellCaster>();
+        // spellCaster = GetComponent<EntitySpellCaster>();
         spriteRenderer = GetComponentInChildren<SpriteRenderer>();
 
         if (entity == null)
@@ -404,55 +404,55 @@ public class EntityController : MonoBehaviour
 
     #region Spell Casting
 
-    /// <summary>
-    /// Casts spell at target.
-    /// </summary>
-    public bool CastSpellAtTarget(int slotIndex, Entity target)
-    {
-        if (spellCaster == null || target == null)
-            return false;
+    // /// <summary>
+    // /// Casts spell at target.
+    // /// </summary>
+    // public bool CastSpellAtTarget(int slotIndex, Entity target)
+    // {
+    //     if (spellCaster == null || target == null)
+    //         return false;
 
-        bool success = spellCaster.CastSpell(slotIndex, target);
+    //     bool success = spellCaster.CastSpell(slotIndex, target);
 
-        if (showDebug)
-        {
-            if (success)
-                Debug.Log($"{name}: Cast spell {slotIndex} on {target.EntityName}");
-            else
-                Debug.LogWarning($"{name}: Failed to cast spell {slotIndex}");
-        }
+    //     if (showDebug)
+    //     {
+    //         if (success)
+    //             Debug.Log($"{name}: Cast spell {slotIndex} on {target.EntityName}");
+    //         else
+    //             Debug.LogWarning($"{name}: Failed to cast spell {slotIndex}");
+    //     }
 
-        return success;
-    }
+    //     return success;
+    // }
 
-    /// <summary>
-    /// Casts spell at position.
-    /// </summary>
-    public bool CastSpellAtPosition(int slotIndex, Vector2 position)
-    {
-        if (spellCaster == null)
-            return false;
+    // /// <summary>
+    // /// Casts spell at position.
+    // /// </summary>
+    // public bool CastSpellAtPosition(int slotIndex, Vector2 position)
+    // {
+    //     if (spellCaster == null)
+    //         return false;
 
-        bool success = spellCaster.CastSpellAtPosition(slotIndex, position);
+    //     bool success = spellCaster.CastSpellAtPosition(slotIndex, position);
 
-        if (showDebug)
-        {
-            if (success)
-                Debug.Log($"{name}: Cast spell {slotIndex} at {position}");
-            else
-                Debug.LogWarning($"{name}: Failed to cast spell {slotIndex}");
-        }
+    //     if (showDebug)
+    //     {
+    //         if (success)
+    //             Debug.Log($"{name}: Cast spell {slotIndex} at {position}");
+    //         else
+    //             Debug.LogWarning($"{name}: Failed to cast spell {slotIndex}");
+    //     }
 
-        return success;
-    }
+    //     return success;
+    // }
 
-    /// <summary>
-    /// Can spell be cast?
-    /// </summary>
-    public bool CanCastSpell(int slotIndex)
-    {
-        return spellCaster != null && spellCaster.CanCastSpell(slotIndex);
-    }
+    // /// <summary>
+    // /// Can spell be cast?
+    // /// </summary>
+    // public bool CanCastSpell(int slotIndex)
+    // {
+    //     return spellCaster != null && spellCaster.CanCastSpell(slotIndex);
+    // }
 
     #endregion
 

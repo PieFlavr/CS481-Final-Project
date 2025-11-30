@@ -14,26 +14,26 @@ public class EntityResources
     [SerializeField] private float maxHealth;
     [SerializeField] private float currentHealth;
 
-    // Mana
-    [SerializeField] private float maxMana;
-    [SerializeField] private float currentMana;
+    // // Mana
+    // [SerializeField] private float maxMana;
+    // [SerializeField] private float currentMana;
 
     // Regeneration
     [SerializeField] private float healthRegenRate = 0f; // Health per second
-    [SerializeField] private float manaRegenRate = 10f;  // Mana per second
+    // [SerializeField] private float manaRegenRate = 10f;  // Mana per second
 
     // Events
     public event Action<float, float> OnHealthChanged; // (current, max)
-    public event Action<float, float> OnManaChanged;   // (current, max)
+    // public event Action<float, float> OnManaChanged;   // (current, max)
     public event Action OnHealthDepleted;
 
     // Properties
     public float MaxHealth => maxHealth;
     public float CurrentHealth => currentHealth;
-    public float MaxMana => maxMana;
-    public float CurrentMana => currentMana;
+    // public float MaxMana => maxMana;
+    // public float CurrentMana => currentMana;
     public float HealthRegenRate => healthRegenRate;
-    public float ManaRegenRate => manaRegenRate;
+    // public float ManaRegenRate => manaRegenRate;
 
     /// <summary>
     /// Gets the health percentage (0-1).
@@ -43,7 +43,7 @@ public class EntityResources
     /// <summary>
     /// Gets the mana percentage (0-1).
     /// </summary>
-    public float ManaPercent => maxMana > 0 ? currentMana / maxMana : 0f;
+    // public float ManaPercent => maxMana > 0 ? currentMana / maxMana : 0f;
 
     /// <summary>
     /// Initializes resources with base values from EntityData.
@@ -52,10 +52,10 @@ public class EntityResources
     {
         maxHealth = baseHealth;
         currentHealth = baseHealth;
-        maxMana = baseMana;
-        currentMana = baseMana;
-        this.healthRegenRate = healthRegenRate;
-        this.manaRegenRate = manaRegenRate;
+        // maxMana = baseMana;
+        // currentMana = baseMana;
+        // this.healthRegenRate = healthRegenRate;
+        // this.manaRegenRate = manaRegenRate;
     }
 
     /// <summary>
@@ -78,20 +78,20 @@ public class EntityResources
         }
     }
 
-    /// <summary>
-    /// Modifies mana by the specified amount (positive = restore, negative = consume).
-    /// </summary>
-    public void ModifyMana(float amount)
-    {
-        float previousMana = currentMana;
-        currentMana = Mathf.Clamp(currentMana + amount, 0, maxMana);
+    // /// <summary>
+    // /// Modifies mana by the specified amount (positive = restore, negative = consume).
+    // /// </summary>
+    // public void ModifyMana(float amount)
+    // {
+    //     float previousMana = currentMana;
+    //     currentMana = Mathf.Clamp(currentMana + amount, 0, maxMana);
 
-        // Only fire events if mana actually changed
-        if (!Mathf.Approximately(currentMana, previousMana))
-        {
-            OnManaChanged?.Invoke(currentMana, maxMana);
-        }
-    }
+    //     // Only fire events if mana actually changed
+    //     if (!Mathf.Approximately(currentMana, previousMana))
+    //     {
+    //         OnManaChanged?.Invoke(currentMana, maxMana);
+    //     }
+    // }
 
     /// <summary>
     /// Sets the maximum health and optionally adjusts current health.
@@ -107,19 +107,19 @@ public class EntityResources
         }
     }
 
-    /// <summary>
-    /// Sets the maximum mana and optionally adjusts current mana.
-    /// </summary>
-    public void SetMaxMana(float newMax, bool adjustCurrent = true)
-    {
-        maxMana = Mathf.Max(0, newMax);
+    // /// <summary>
+    // /// Sets the maximum mana and optionally adjusts current mana.
+    // /// </summary>
+    // public void SetMaxMana(float newMax, bool adjustCurrent = true)
+    // {
+    //     maxMana = Mathf.Max(0, newMax);
 
-        if (adjustCurrent)
-        {
-            currentMana = Mathf.Min(currentMana, maxMana);
-            OnManaChanged?.Invoke(currentMana, maxMana);
-        }
-    }
+    //     if (adjustCurrent)
+    //     {
+    //         currentMana = Mathf.Min(currentMana, maxMana);
+    //         OnManaChanged?.Invoke(currentMana, maxMana);
+    //     }
+    // }
 
     /// <summary>
     /// Fully restores health and mana.
@@ -127,7 +127,7 @@ public class EntityResources
     public void FullRestore()
     {
         ModifyHealth(maxHealth - currentHealth);
-        ModifyMana(maxMana - currentMana);
+        // ModifyMana(maxMana - currentMana);
     }
 
     /// <summary>
@@ -140,10 +140,10 @@ public class EntityResources
         {
             ModifyHealth(healthRegenRate * deltaTime);
         }
-        if (manaRegenRate > 0f && currentMana < maxMana)
-        {
-            ModifyMana(manaRegenRate * deltaTime);
-        }
+        // if (manaRegenRate > 0f && currentMana < maxMana)
+        // {
+        //     ModifyMana(manaRegenRate * deltaTime);
+        // }
     }
 
     /// <summary>
@@ -151,7 +151,9 @@ public class EntityResources
     /// </summary>
     public override string ToString()
     {
-        return $"Health: {currentHealth:F1}/{maxHealth:F1} ({HealthPercent:P0}), " +
-               $"Mana: {currentMana:F1}/{maxMana:F1} ({ManaPercent:P0})";
+        // return $"Health: {currentHealth:F1}/{maxHealth:F1} ({HealthPercent:P0}), " +
+        //        $"Mana: {currentMana:F1}/{maxMana:F1} ({ManaPercent:P0})";
+
+        return $"Health: {currentHealth:F1}/{maxHealth:F1} ({HealthPercent:P0}), ";
     }
 }

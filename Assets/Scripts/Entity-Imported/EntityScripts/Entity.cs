@@ -19,7 +19,7 @@ public class Entity : MonoBehaviour
     private EntityStats stats;
     private EntityResources resources;
     private EntityController controller;
-    private EntitySpellCaster spellCaster;
+    // private EntitySpellCaster spellCaster;
 
     #endregion
 
@@ -37,7 +37,7 @@ public class Entity : MonoBehaviour
     public EntityStats Stats => stats;
     public EntityResources Resources => resources;
     public EntityController Controller => controller;
-    public EntitySpellCaster SpellCaster => spellCaster;
+    // public EntitySpellCaster SpellCaster => spellCaster;
     public string EntityName => entityData != null ? entityData.entityName : "Unknown Entity";
     public SpriteRenderer SpriteRenderer => spriteRenderer;
     public Animator Animator => animator;
@@ -107,9 +107,9 @@ public class Entity : MonoBehaviour
     {
         resources = new EntityResources(
             entityData.baseHealth,
-            entityData.baseMana,
-            entityData.healthRegenRate,
-            entityData.manaRegenRate
+            // entityData.baseMana,
+            entityData.healthRegenRate//,
+            // entityData.manaRegenRate
         );
         resources.OnHealthDepleted += HandleDeath;
         resources.OnHealthChanged += HandleHealthChanged;
@@ -118,7 +118,7 @@ public class Entity : MonoBehaviour
     private void InitializeReferences()
     {
         controller = GetComponent<EntityController>();
-        spellCaster = GetComponent<EntitySpellCaster>();
+        // spellCaster = GetComponent<EntitySpellCaster>();
     }
 
     private void RegisterEntity()
@@ -194,7 +194,7 @@ public class Entity : MonoBehaviour
         // Update UI for player faction
         if (entityData.faction == EntityFaction.Player)
         {
-            UIManager.Instance?.UpdateHealthDisplay((int)current, (int)max);
+            // UIManager.Instance?.UpdateHealthDisplay((int)current, (int)max);
         }
     }
 
@@ -231,14 +231,14 @@ public class Entity : MonoBehaviour
 
     private void HandlePlayerDeath()
     {
-        if (RunManager.Instance != null)
-        {
-            RunManager.Instance.RecordPlayerDeath("Defeated in combat");
-        }
-        else
-        {
-            GameManager.Instance?.GameOver();
-        }
+        // if (RunManager.Instance != null)
+        // {
+        //     RunManager.Instance.RecordPlayerDeath("Defeated in combat");
+        // }
+        // else
+        // {
+        //     GameManager.Instance?.GameOver();
+        // }
     }
 
     #endregion

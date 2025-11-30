@@ -63,8 +63,8 @@ public class PlayerController : EntityController
             Flip(0);
         }
 
-        // Update held spells
-        UpdateHeldSpells();
+        // // Update held spells
+        // UpdateHeldSpells();
     }
 
     /// <summary>
@@ -154,173 +154,173 @@ public class PlayerController : EntityController
 
     #region Player Spell Casting
 
-    /// <summary>
-    /// Called by Input System when spell 1 input changes state.
-    /// </summary>
-    public void OnCastSpell1(InputAction.CallbackContext context)
-    {
-        HandleSpellInputState(0, context);
-    }
+    // /// <summary>
+    // /// Called by Input System when spell 1 input changes state.
+    // /// </summary>
+    // public void OnCastSpell1(InputAction.CallbackContext context)
+    // {
+    //     HandleSpellInputState(0, context);
+    // }
 
-    /// <summary>
-    /// Called by Input System when spell 2 input changes state.
-    /// </summary>
-    public void OnCastSpell2(InputAction.CallbackContext context)
-    {
-        HandleSpellInputState(1, context);
-    }
+    // /// <summary>
+    // /// Called by Input System when spell 2 input changes state.
+    // /// </summary>
+    // public void OnCastSpell2(InputAction.CallbackContext context)
+    // {
+    //     HandleSpellInputState(1, context);
+    // }
 
-    /// <summary>
-    /// Called by Input System when spell 3 input changes state.
-    /// </summary>
-    public void OnCastSpell3(InputAction.CallbackContext context)
-    {
-        HandleSpellInputState(2, context);
-    }
+    // /// <summary>
+    // /// Called by Input System when spell 3 input changes state.
+    // /// </summary>
+    // public void OnCastSpell3(InputAction.CallbackContext context)
+    // {
+    //     HandleSpellInputState(2, context);
+    // }
 
-    /// <summary>
-    /// Called by Input System when spell 4 input changes state.
-    /// </summary>
-    public void OnCastSpell4(InputAction.CallbackContext context)
-    {
-        HandleSpellInputState(3, context);
-    }
+    // /// <summary>
+    // /// Called by Input System when spell 4 input changes state.
+    // /// </summary>
+    // public void OnCastSpell4(InputAction.CallbackContext context)
+    // {
+    //     HandleSpellInputState(3, context);
+    // }
 
-    /// <summary>
-    /// Handles spell input state transitions (started, performed, canceled).
-    /// </summary>
-    private void HandleSpellInputState(int slotIndex, InputAction.CallbackContext context)
-    {
-        if (spellCaster == null || mainCamera == null)
-        {
-            Debug.LogWarning("PlayerController: SpellCaster or MainCamera is null");
-            return;
-        }
+    // /// <summary>
+    // /// Handles spell input state transitions (started, performed, canceled).
+    // /// </summary>
+    // private void HandleSpellInputState(int slotIndex, InputAction.CallbackContext context)
+    // {
+    //     if (spellCaster == null || mainCamera == null)
+    //     {
+    //         Debug.LogWarning("PlayerController: SpellCaster or MainCamera is null");
+    //         return;
+    //     }
 
-        // Get spell to check if it requires holding
-        Spell spell = spellCaster.GetSpell(slotIndex);
-        if (spell == null)
-        {
-            Debug.LogWarning($"PlayerController: No spell in slot {slotIndex}");
-            return;
-        }
+    //     // Get spell to check if it requires holding
+    //     Spell spell = spellCaster.GetSpell(slotIndex);
+    //     if (spell == null)
+    //     {
+    //         Debug.LogWarning($"PlayerController: No spell in slot {slotIndex}");
+    //         return;
+    //     }
 
-        // Handle different input phases
-        if (context.started)
-        {
-            // Button pressed down
-            OnSpellInputStarted(slotIndex, spell);
-        }
-        else if (context.performed)
-        {
-            // Button fully pressed (for instant cast spells)
-            if (!spell.requiresHold)
-            {
-                OnSpellInputPerformed(slotIndex, spell);
-            }
-        }
-        else if (context.canceled)
-        {
-            // Button released
-            OnSpellInputCanceled(slotIndex, spell);
-        }
-    }
+    //     // Handle different input phases
+    //     if (context.started)
+    //     {
+    //         // Button pressed down
+    //         OnSpellInputStarted(slotIndex, spell);
+    //     }
+    //     else if (context.performed)
+    //     {
+    //         // Button fully pressed (for instant cast spells)
+    //         if (!spell.requiresHold)
+    //         {
+    //             OnSpellInputPerformed(slotIndex, spell);
+    //         }
+    //     }
+    //     else if (context.canceled)
+    //     {
+    //         // Button released
+    //         OnSpellInputCanceled(slotIndex, spell);
+    //     }
+    // }
 
-    /// <summary>
-    /// Called when spell button is first pressed down.
-    /// </summary>
-    private void OnSpellInputStarted(int slotIndex, Spell spell)
-    {
-        Debug.Log($"PlayerController: Spell {slotIndex} input started");
-        spellHeldStates[slotIndex] = true;
+    // /// <summary>
+    // /// Called when spell button is first pressed down.
+    // /// </summary>
+    // private void OnSpellInputStarted(int slotIndex, Spell spell)
+    // {
+    //     Debug.Log($"PlayerController: Spell {slotIndex} input started");
+    //     spellHeldStates[slotIndex] = true;
 
-        // For instant cast spells, cast immediately on button down
-        if (!spell.requiresHold)
-        {
-            CastSpellFromInput(slotIndex);
-        }
-    }
+    //     // For instant cast spells, cast immediately on button down
+    //     if (!spell.requiresHold)
+    //     {
+    //         CastSpellFromInput(slotIndex);
+    //     }
+    // }
 
-    /// <summary>
-    /// Called when spell button is fully pressed (performed phase).
-    /// Used for instant cast spells.
-    /// </summary>
-    private void OnSpellInputPerformed(int slotIndex, Spell spell)
-    {
-        Debug.Log($"PlayerController: Spell {slotIndex} input performed");
-        // Instant cast spells already cast in OnSpellInputStarted
-    }
+    // /// <summary>
+    // /// Called when spell button is fully pressed (performed phase).
+    // /// Used for instant cast spells.
+    // /// </summary>
+    // private void OnSpellInputPerformed(int slotIndex, Spell spell)
+    // {
+    //     Debug.Log($"PlayerController: Spell {slotIndex} input performed");
+    //     // Instant cast spells already cast in OnSpellInputStarted
+    // }
 
-    /// <summary>
-    /// Called when spell button is released.
-    /// </summary>
-    private void OnSpellInputCanceled(int slotIndex, Spell spell)
-    {
-        Debug.Log($"PlayerController: Spell {slotIndex} input canceled");
-        spellHeldStates[slotIndex] = false;
+    // /// <summary>
+    // /// Called when spell button is released.
+    // /// </summary>
+    // private void OnSpellInputCanceled(int slotIndex, Spell spell)
+    // {
+    //     Debug.Log($"PlayerController: Spell {slotIndex} input canceled");
+    //     spellHeldStates[slotIndex] = false;
 
-        // For hold-to-cast spells, cast when button is released
-        if (spell.requiresHold)
-        {
-            CastSpellFromInput(slotIndex);
-        }
-    }
+    //     // For hold-to-cast spells, cast when button is released
+    //     if (spell.requiresHold)
+    //     {
+    //         CastSpellFromInput(slotIndex);
+    //     }
+    // }
 
-    /// <summary>
-    /// Updates held spells every frame (for channeling/charging spells).
-    /// </summary>
-    private void UpdateHeldSpells()
-    {
-        if (spellCaster == null)
-            return;
+    // /// <summary>
+    // /// Updates held spells every frame (for channeling/charging spells).
+    // /// </summary>
+    // private void UpdateHeldSpells()
+    // {
+    //     if (spellCaster == null)
+    //         return;
 
-        for (int i = 0; i < spellHeldStates.Length; i++)
-        {
-            if (spellHeldStates[i])
-            {
-                Spell spell = spellCaster.GetSpell(i);
-                if (spell != null && spell.updateWhileHeld)
-                {
-                    // Call spell's OnHeldUpdate for channeling/charging logic
-                    spell.OnHeldUpdate(entity, Time.deltaTime);
-                }
-            }
-        }
-    }
+    //     for (int i = 0; i < spellHeldStates.Length; i++)
+    //     {
+    //         if (spellHeldStates[i])
+    //         {
+    //             Spell spell = spellCaster.GetSpell(i);
+    //             if (spell != null && spell.updateWhileHeld)
+    //             {
+    //                 // Call spell's OnHeldUpdate for channeling/charging logic
+    //                 spell.OnHeldUpdate(entity, Time.deltaTime);
+    //             }
+    //         }
+    //     }
+    // }
 
-    /// <summary>
-    /// Casts a spell at the specified slot using mouse position for targeting.
-    /// </summary>
-    private void CastSpellFromInput(int slotIndex)
-    {
-        if (spellCaster == null || mainCamera == null)
-        {
-            Debug.LogWarning("PlayerController: SpellCaster or MainCamera is null");
-            return;
-        }
+    // /// <summary>
+    // /// Casts a spell at the specified slot using mouse position for targeting.
+    // /// </summary>
+    // private void CastSpellFromInput(int slotIndex)
+    // {
+    //     if (spellCaster == null || mainCamera == null)
+    //     {
+    //         Debug.LogWarning("PlayerController: SpellCaster or MainCamera is null");
+    //         return;
+    //     }
 
-        // Get mouse position in world space (using new Input System)
-        Vector2 mouseWorldPos = GetMouseWorldPosition();
+    //     // Get mouse position in world space (using new Input System)
+    //     Vector2 mouseWorldPos = GetMouseWorldPosition();
 
-        // Try to find entity at mouse position
-        Entity targetEntity = GetEntityAtPosition(mouseWorldPos);
+    //     // Try to find entity at mouse position
+    //     Entity targetEntity = GetEntityAtPosition(mouseWorldPos);
 
-        // Debug visualization
-        if (showDebug && targetEntity != null)
-        {
-            Debug.DrawLine(transform.position, targetEntity.transform.position, Color.green, 0.1f);
-        }
+    //     // Debug visualization
+    //     if (showDebug && targetEntity != null)
+    //     {
+    //         Debug.DrawLine(transform.position, targetEntity.transform.position, Color.green, 0.1f);
+    //     }
 
-        // Cast the spell
-        if (targetEntity != null)
-        {
-            CastSpellAtTarget(slotIndex, targetEntity);
-        }
-        else
-        {
-            CastSpellAtPosition(slotIndex, mouseWorldPos);
-        }
-    }
+    //     // Cast the spell
+    //     if (targetEntity != null)
+    //     {
+    //         CastSpellAtTarget(slotIndex, targetEntity);
+    //     }
+    //     else
+    //     {
+    //         CastSpellAtPosition(slotIndex, mouseWorldPos);
+    //     }
+    // }
 
     /// <summary>
     /// Gets the mouse position in world space using the new Input System.

@@ -48,14 +48,14 @@ public class EntityData : ScriptableObject
     [Tooltip("Maximum health")]
     public float baseHealth = 100f;
 
-    [Tooltip("Maximum mana")]
-    public float baseMana = 100f;
+    // [Tooltip("Maximum mana")]
+    // public float baseMana = 100f;
 
     [Tooltip("Health regeneration rate (per second)")]
     public float healthRegenRate = 0f;
 
-    [Tooltip("Mana regeneration rate (per second)")]
-    public float manaRegenRate = 10f;
+    // [Tooltip("Mana regeneration rate (per second)")]
+    // public float manaRegenRate = 10f;
 
     [Header("Base Stats")]
     [Tooltip("Weight (affects physics interactions)")]
