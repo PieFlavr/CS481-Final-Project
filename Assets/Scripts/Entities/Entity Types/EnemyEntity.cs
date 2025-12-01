@@ -9,25 +9,47 @@ public class EnemyEntity : BaseEntity
     [SerializeField] private ArchetypeData archetypeData;
 
     private StatsComponent statsComponent;
+    private FSMComponent fsmComponent;
 
     public override EntityType Type => EntityType.Enemy;
     public string ArchetypeId => archetypeData?.ArchetypeId ?? "unknown";
     public ArchetypeData ArchetypeData => archetypeData;
     public StatsComponent Stats => statsComponent;
+    public FSMComponent FSM => fsmComponent;
 
     protected override void Awake()
     {
         base.Awake();
 
+        // Get or add StatsComponent
         statsComponent = GetComponent<StatsComponent>();
         if (statsComponent == null)
         {
             statsComponent = gameObject.AddComponent<StatsComponent>();
         }
 
+        // Get or add FSMComponent
+        fsmComponent = GetComponent<FSMComponent>();
+        if (fsmComponent == null)
+        {
+            fsmComponent = gameObject.AddComponent<FSMComponent>();
+        }
+
+        // Initialize stats from archetype
         if (archetypeData != null)
         {
             statsComponent.InitializeFromArchetype(archetypeData);
+        }
+    }
+
+    protected override void Start()
+    {
+        base.Start();
+
+        // Initialize FSM after all components are ready
+        if (archetypeData != null && fsmComponent != null)
+        {
+            fsmComponent.Initialize(this, archetypeData);
         }
     }
 
@@ -42,7 +64,11 @@ public class EnemyEntity : BaseEntity
             if (statsComponent == null)
                 statsComponent = GetComponent<StatsComponent>() ?? gameObject.AddComponent<StatsComponent>();
 
+            if (fsmComponent == null)
+                fsmComponent = GetComponent<FSMComponent>() ?? gameObject.AddComponent<FSMComponent>();
+
             statsComponent.InitializeFromArchetype(ad);
+            fsmComponent.Initialize(this, ad);
         }
     }
 

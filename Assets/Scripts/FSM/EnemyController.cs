@@ -1,6 +1,12 @@
-using System;
 using UnityEngine;
 
+/// <summary>
+/// DEPRECATED: Legacy EnemyController.
+/// FSM logic has been moved to FSMComponent + EnemyEntity.
+/// This file remains for backward compatibility but should not be used for new enemies.
+/// Use EnemyEntity with FSMComponent instead.
+/// </summary>
+[System.Obsolete("Use EnemyEntity + FSMComponent instead")]
 public class EnemyController : MonoBehaviour
 {
     [Header("Enemy Parameters")]
@@ -20,17 +26,6 @@ public class EnemyController : MonoBehaviour
 
     void Start()
     {
-        var idle
-        var fight = new FightState(this, this.targetLayer, () => this.stateMachine.ChangeToState());
-
-        this.stateMachine = new(this.Evaluate, new IState[]
-        {
-
-        });
-    }
-
-    private float Evaluate(IState state)
-    {
-        throw new NotImplementedException();
+        Debug.LogWarning("[EnemyController] DEPRECATED: Use EnemyEntity + FSMComponent instead!");
     }
 }

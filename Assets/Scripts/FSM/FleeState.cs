@@ -1,47 +1,77 @@
 using UnityEngine;
 
+/// <summary>
+/// Flee state: retreat from threats when health is critical.
+/// Moves away from detected targets.
+/// Transitions to Idle when safe, Chase when health recovers.
+/// </summary>
 public class FleeState : IState
 {
-    private readonly EnemyController owner;
+    private readonly FSMComponent fsmComponent;
+    private readonly EnemyEntity owner;
     private readonly Transform transform;
-    private readonly LayerMask targetLayer;
-    private readonly System.Action onIdle;
-    private readonly Collider[] targetColliders = new Collider[1];
 
-    public FleeState(EnemyController owner, LayerMask targetLayer, System.Action onIdle)
+    public FleeState(FSMComponent fsmComponent, EnemyEntity owner)
     {
+        this.fsmComponent = fsmComponent;
         this.owner = owner;
         this.transform = owner.transform;
-        this.targetLayer = targetLayer;
-        this.onIdle = onIdle;
     }
 
-    public void Enter() => Debug.Log("Fight: Enter");
+    public void Enter()
+    {
+        Debug.Log($"[{owner.ArchetypeId}] Flee: Enter");
+    }
 
     public void Tick()
     {
-        Vector3 position = this.transform.position;
-        if (!this.TryFindTargetInRange(position, this.owner.AggroDistance, out Collider target))
+        // Find closest threat
+        if (!TryFindClosestThreat(out Transform threat, out float distance))
+        {
+            // No threats detected, stand still
             return;
+        }
 
-        var targetVelocity = target.attachedRigidbody.linearVelocity;
-        var desiredHeading = -targetVelocity.normalized;
+        // Move away from threat
+        Vector3 fleeDirection = (transform.position - threat.position).normalized;
+        transform.position += fleeDirection * owner.Stats.Speed * 1.5f * Time.deltaTime; // Flee faster
 
-        // Target can safely be hit, attack.
-        // target.GetComponent<>();
+        // Face flee direction
+        if (fleeDirection != Vector3.zero)
+        {
+            transform.rotation = Quaternion.LookRotation(fleeDirection);
+        }
     }
 
-    public void Exit() => Debug.Log("Fight: Exit");
-
-    private bool TryFindTargetInRange(Vector3 position, float radius, out Collider target)
+    public void Exit()
     {
-        var hits = Physics.OverlapSphereNonAlloc(
-            position,
-            radius: radius,
-            this.targetColliders,
-            layerMask: this.targetLayer);
+        Debug.Log($"[{owner.ArchetypeId}] Flee: Exit");
+    }
 
-        target = hits > 0 ? this.targetColliders[0] : null;
-        return target != null;
+    private bool TryFindClosestThreat(out Transform threat, out float distance)
+    {
+        threat = null;
+        distance = float.MaxValue;
+
+        Collider[] hits = Physics.OverlapSphere(
+            transform.position,
+            fsmComponent.RuntimeParameters.aggroDistance.Value,
+            owner.ArchetypeData.TargetLayer
+        );
+
+        if (hits.Length == 0) return false;
+
+        foreach (var hit in hits)
+        {
+            float dist = Vector3.Distance(transform.position, hit.transform.position);
+            if (dist < distance)
+            {
+                distance = dist;
+                threat = hit.transform;
+            }
+        }
+
+        return threat != null;
     }
 }
+

@@ -8,6 +8,8 @@ public class StateMachine : MonoBehaviour
     private IState[] states;
     private Evaluator evaluator;
 
+    public IState CurrentState => currentState;
+
     public StateMachine(Evaluator evaluator, IState[] states)
     {
         this.evaluator = evaluator;
@@ -27,7 +29,7 @@ public class StateMachine : MonoBehaviour
         foreach (var state in states)
         {
             float utility = this.evaluator(state);
-            if (maxUtility > utility)
+            if (utility > maxUtility) // FIXED: was maxUtility > utility
             {
                 bestState = state;
                 maxUtility = utility;

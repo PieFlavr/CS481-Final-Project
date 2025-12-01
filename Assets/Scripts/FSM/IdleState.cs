@@ -1,53 +1,35 @@
 using UnityEngine;
 
+/// <summary>
+/// Idle state: patrol, wander, or stand guard.
+/// Transitions to Chase when target detected within aggro range.
+/// </summary>
 public class IdleState : IState
 {
-    private readonly EnemyController owner;
+    private readonly FSMComponent fsmComponent;
+    private readonly EnemyEntity owner;
     private readonly Transform transform;
-    private readonly LayerMask targetLayer;
-    private readonly System.Action onRun;
 
-    public IdleState(EnemyController owner, LayerMask targetLayer, System.Action onRun)
+    public IdleState(FSMComponent fsmComponent, EnemyEntity owner)
     {
+        this.fsmComponent = fsmComponent;
         this.owner = owner;
         this.transform = owner.transform;
-        this.targetLayer = targetLayer;
-        this.onRun = onRun;
     }
 
-    public void Enter() => Debug.Log("Fight: Enter");
+    public void Enter()
+    {
+        Debug.Log($"[{owner.ArchetypeId}] Idle: Enter");
+    }
 
     public void Tick()
     {
-        Vector3 position = this.transform.position;
-        if (!this.TryFindTargetInRange(position, this.owner.AggroDistance, out Transform target))
-            return;
-
-        // Target is too close, run away.
-        if (Vector3.Distance(position, target.position) < this.owner.DisengageDistance)
-        {
-            onRun?.Invoke();
-            return;
-        }
-
-        // Target can safely be hit, attack.
-        // target.GetComponent<>();
+        // Idle behavior: stand guard or simple patrol
+        // State machine handles transition evaluation via utility
     }
 
-    public void Exit() => Debug.Log("Fight: Exit");
-
-    private bool TryFindTargetInRange(Vector3 position, float radius, out Transform target)
+    public void Exit()
     {
-        bool hit = Physics.SphereCast(
-            origin: position,
-            radius: radius,
-            direction: Vector3.zero,
-            out RaycastHit hitInfo,
-            maxDistance: radius,
-            layerMask: this.targetLayer
-        );
-
-        target = hit ? hitInfo.collider.transform : null;
-        return target != null;
+        Debug.Log($"[{owner.ArchetypeId}] Idle: Exit");
     }
 }
