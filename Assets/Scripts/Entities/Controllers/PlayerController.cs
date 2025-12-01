@@ -10,6 +10,9 @@ public class PlayerController : MonoBehaviour
     #region Serialized Fields
     [Header("Movement Settings")]
     [SerializeField] private float moveSpeed = 5f;
+    [Header("Combat")]
+    [SerializeField] private float attackRange = 1.0f;
+    [SerializeField] private float attackRadius = 0.5f;
     #endregion
 
     #region Private Fields
@@ -127,8 +130,59 @@ public class PlayerController : MonoBehaviour
     private void HandleAttack()
     {
         Debug.Log("[PlayerController] Attack triggered!");
-        // TODO: Implement attack logic here
-        // For now, the animation will play via the isAttacking parameter
+        if (playerEntity == null)
+        {
+            Debug.LogWarning("[PlayerController] No PlayerEntity found; cannot deal damage.");
+            return;
+        }
+
+        // Determine damage amount from player stats if available
+        float damage = 1f;
+        if (playerEntity.Stats != null)
+            damage = playerEntity.Stats.Damage;
+
+        // Compute attack origin in the look direction (fallback to facing last animation direction)
+        Vector2 lookDir = inputManager != null ? inputManager.LookDirection : Vector2.zero;
+        if (lookDir.sqrMagnitude < 0.001f)
+        {
+            // Fallback: use animator last facing values
+            float lx = animator.GetFloat(LastXParam);
+            float ly = animator.GetFloat(LastYParam);
+            lookDir = new Vector2(lx, ly);
+            if (lookDir.sqrMagnitude < 0.001f)
+                lookDir = Vector2.up; // default forward
+        }
+
+        // Prefer stats-provided range/radius when available
+        float range = attackRange;
+        float radius = attackRadius;
+        if (playerEntity.Stats != null)
+        {
+            if (playerEntity.Stats.AttackRange > 0f) range = playerEntity.Stats.AttackRange;
+            if (playerEntity.Stats.AttackRadius > 0f) radius = playerEntity.Stats.AttackRadius;
+        }
+
+        Vector2 origin = (Vector2)transform.position + lookDir.normalized * range;
+
+        // Detect colliders in attack area
+        Collider2D[] hits = Physics2D.OverlapCircleAll(origin, radius);
+        bool hitAny = false;
+        foreach (var c in hits)
+        {
+            if (c == null) continue;
+
+            // Try to get EnemyEntity from collider or its parents
+            EnemyEntity enemy = c.GetComponentInParent<EnemyEntity>();
+            if (enemy != null && enemy.IsAlive)
+            {
+                enemy.TakeDamage(damage);
+                hitAny = true;
+                Debug.Log($"[PlayerController] Hit enemy {enemy.EntityID} for {damage} damage.");
+            }
+        }
+
+        if (!hitAny)
+            Debug.Log("[PlayerController] Attack hit nothing.");
     }
     #endregion
 }

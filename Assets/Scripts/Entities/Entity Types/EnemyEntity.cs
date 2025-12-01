@@ -80,4 +80,14 @@ public class EnemyEntity : BaseEntity
     {
         return statsComponent != null ? statsComponent.Damage : 0f;
     }
+
+    public float GetAttackRange()
+    {
+        return statsComponent != null ? statsComponent.AttackRange : 0f;
+    }
+
+    public float GetAttackRadius()
+    {
+        return statsComponent != null ? statsComponent.AttackRadius : 0f;
+    }
 }

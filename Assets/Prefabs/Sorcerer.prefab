@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 6712895043471317450}
   - component: {fileID: 1382953170604215955}
   - component: {fileID: 316648135654111875}
+  - component: {fileID: 7994111177538818634}
   m_Layer: 9
   m_Name: Sorcerer
   m_TagString: Untagged
@@ -199,3 +200,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   animator: {fileID: 6712895043471317450}
+--- !u!114 &7994111177538818634
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 787262111239574603}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6a2fc7ba61f18fc419c1e35cca28ab8e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  archetypeData: {fileID: 11400000, guid: c156f2f7cb7ad0143987a86c897eb0d7, type: 2}
