@@ -17,11 +17,15 @@ public abstract class EntityData : ScriptableObject
     [SerializeField] protected float maxHealth = 10f;
     [SerializeField] protected float speed = 3f;
     [SerializeField] protected float damage = 1f;
+    [SerializeField] protected float attackRange = 1f;
+    [SerializeField] protected float attackRadius = 0.5f;
 
     public string DisplayName => displayName;
     public float MaxHealth => maxHealth;
     public float Speed => speed;
     public float Damage => damage;
+    public float AttackRange => attackRange;
+    public float AttackRadius => attackRadius;
     public BaseEntity Prefab => prefab;
 
     private void OnValidate()
@@ -29,6 +33,8 @@ public abstract class EntityData : ScriptableObject
         if (maxHealth < 0f) maxHealth = 0f;
         if (speed < 0f) speed = 0f;
         if (damage < 0f) damage = 0f;
+        if (attackRange < 0f) attackRange = 0f;
+        if (attackRadius < 0f) attackRadius = 0f;
 
         // Prefab null is allowed (fallback to spawner default), but warn designers.
         if (prefab == null)
