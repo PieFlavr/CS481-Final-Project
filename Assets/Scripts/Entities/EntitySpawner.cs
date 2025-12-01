@@ -10,6 +10,12 @@ public class EntitySpawner : MonoBehaviour
     [Header("Default Prefab")]
     [SerializeField] private BaseEntity defaultPrefab;
 
+    [Header("Demo / Temporary Spawn (remove for production)")]
+    [Tooltip("If enabled, the spawner will immediately spawn `demoSpawnCount` of `demoArchetype` on Start and then destroy itself. Temporary for testing.")]
+    [SerializeField] private bool spawnOnStart = true;
+    [SerializeField] private ArchetypeData demoArchetype;
+    [SerializeField] private int demoSpawnCount = 5;
+    [SerializeField] private float demoSpawnRadius = 2f;
 
     /// <summary>
     /// Spawn a single entity from entity data.
@@ -51,6 +57,24 @@ public class EntitySpawner : MonoBehaviour
             Vector3 spawnPos = spawnCenter + randomOffset;
             SpawnEntity(archetypeData, spawnPos, default, archetypeData?.Prefab);
         }
+    }
+
+    private void Start()
+    {
+        // Temporary demo behavior: spawn a small wave then self-destruct so this spawner doesn't persist.
+        if (!spawnOnStart) return;
+
+        if (demoArchetype == null)
+        {
+            Debug.LogWarning("[EntitySpawner] spawnOnStart is true but no demoArchetype is assigned. Skipping demo spawn.");
+            return;
+        }
+
+        SpawnEntities(demoArchetype, Mathf.Max(1, demoSpawnCount), transform.position, Mathf.Max(0.01f, demoSpawnRadius));
+        Debug.Log($"[EntitySpawner] Demo spawned {demoSpawnCount} of {demoArchetype.DisplayName}. Destroying spawner (temporary).");
+
+        // Destroy this GameObject so the demo behaviour is easy to remove and won't repeat.
+        Destroy(gameObject);
     }
 
     /// <summary>
