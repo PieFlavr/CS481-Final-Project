@@ -48,7 +48,10 @@ public class InputManager : MonoBehaviour
         if (Instance != null && Instance != this)
         {
             Debug.LogWarning("[InputManager] Duplicate instance detected -- annihilating it now!");
-            Destroy(gameObject);
+            if(gameObject != null) 
+            {
+                Destroy(gameObject);
+            }
             return;
         }
         Instance = this;
@@ -183,10 +186,12 @@ public class InputManager : MonoBehaviour
     #region Cleanup
     private void OnDestroy()
     {
-        inputActions.Player.Interact.performed -= context => OnInteract?.Invoke();
-        inputActions.Player.Pause.performed -= context => OnPause?.Invoke();
+        if(inputActions != null) {
+            inputActions.Player.Interact.performed -= context => OnInteract?.Invoke();
+            inputActions.Player.Pause.performed -= context => OnPause?.Invoke();
 
-        inputActions.UI.Back.performed -= context => OnBack?.Invoke();
+            inputActions.UI.Back.performed -= context => OnBack?.Invoke();
+        }
     }
     #endregion Cleanup
 }

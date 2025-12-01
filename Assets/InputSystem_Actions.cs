@@ -1266,7 +1266,10 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
     /// <inheritdoc cref="UnityEngine.InputSystem.InputActionAsset.Disable()" />
     public void Disable()
     {
-        asset.Disable();
+        if(this != null) 
+        {
+            asset.Disable();
+        }
     }
 
     /// <inheritdoc cref="UnityEngine.InputSystem.InputActionAsset.bindings" />
