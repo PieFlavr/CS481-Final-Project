@@ -91,8 +91,13 @@ public class InputManager : MonoBehaviour
         // Interact & UI (these are still manually subscribed)
         inputActions.Player.Interact.performed += context => OnInteract?.Invoke();
         inputActions.Player.Pause.performed += context => OnPausePerformed(context);
+        inputActions.Player.Move.performed += context => OnMoveAction(context);
+        inputActions.Player.Attack.performed += context => OnAttackAction(context);
+
+        inputActions.Player.Move.canceled += context => OnMoveCanceled(context);
 
         inputActions.UI.Back.performed += context => OnBackPerformed(context);
+
     }
 
     private void SubscribeToGameState()
@@ -169,7 +174,10 @@ public class InputManager : MonoBehaviour
         Vector3 worldMousePos = Camera.main.ScreenToWorldPoint(mousePos);
         
         // Calculate direction from character to mouse
-        LookDirection = (worldMousePos - transform.position).normalized;
+        LookDirection = (worldMousePos - Camera.main.transform.position).normalized;
+
+        // Debug.Log($"[InputManager] Mouse Position: {worldMousePos}, Look Direction: {LookDirection}");
+        // Debug.DrawLine(Camera.main.transform.position, worldMousePos, Color.red);
     }
 
     #region Public Input Methods (for PlayerInput component binding)
@@ -179,6 +187,15 @@ public class InputManager : MonoBehaviour
     public void OnMoveAction(InputAction.CallbackContext context)
     {
         UpdateMovement(context.ReadValue<Vector2>());
+    }
+
+    /// <summary>
+    /// Called when the Move action is canceled.
+    /// </summary>
+    /// <param name="context"></param>
+    public void OnMoveCanceled(InputAction.CallbackContext context)
+    {
+        UpdateMovement(Vector2.zero);
     }
 
     /// <summary>
@@ -225,6 +242,9 @@ public class InputManager : MonoBehaviour
     
     #endregion
 
+    
+
+    #region Coroutines
     private IEnumerator AttackRoutine()
     {
         IsAttacking = true;
@@ -237,13 +257,16 @@ public class InputManager : MonoBehaviour
         IsMoving = MoveInput != Vector2.zero;
         attackRoutine = null;
     }
+    #endregion Coroutines
 
     #region Cleanup
     private void OnDestroy()
     {
         if(inputActions != null) {
             inputActions.Player.Interact.performed -= context => OnInteract?.Invoke();
-            inputActions.Player.Pause.performed -= context => OnPause?.Invoke();
+            inputActions.Player.Pause.performed -= context => OnPausePerformed(context);
+            inputActions.Player.Move.performed += context => OnMoveAction(context);
+            inputActions.Player.Attack.performed += context => HandleAttack();
 
             inputActions.UI.Back.performed -= context => OnBack?.Invoke();
         }
