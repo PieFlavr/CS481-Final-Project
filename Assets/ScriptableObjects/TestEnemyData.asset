@@ -17,4 +17,57 @@ MonoBehaviour:
   maxHealth: 10
   speed: 3
   damage: 1
+  attackRange: 1
+  attackRadius: 0.5
   archetypeId: generic
+  fsmParameters:
+    aggroDistance:
+      value: 15
+      min: 5
+      max: 30
+      isActive: 1
+      description: Aggro detection range
+    fleeHealthThreshold:
+      value: 0.3
+      min: 0.1
+      max: 0.9
+      isActive: 1
+      description: Flee when health drops below this %
+    chaseDurationMax:
+      value: 8
+      min: 2
+      max: 30
+      isActive: 1
+      description: Max chase time in seconds
+    distanceFromGroupThreshold:
+      value: 15
+      min: 5
+      max: 25
+      isActive: 1
+      description: Return to group beyond this distance
+    attackCooldown:
+      value: 1.5
+      min: 0.5
+      max: 3
+      isActive: 1
+      description: Attack cooldown in seconds
+    playerWeights:
+      threat: 0.6
+      distance: 0.3
+      priority: 0.1
+    rangedWeights:
+      threat: 0.8
+      distance: 0.2
+      priority: 0
+    meleeWeights:
+      threat: 0.5
+      distance: 0.4
+      priority: 0.1
+    groupLocusWeights:
+      threat: 0
+      distance: 1
+      priority: 0
+  targetLayer:
+    serializedVersion: 2
+    m_Bits: 256
+  sensorRange: 30

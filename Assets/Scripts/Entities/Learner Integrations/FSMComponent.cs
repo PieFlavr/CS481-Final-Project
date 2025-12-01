@@ -42,6 +42,8 @@ public class FSMComponent : MonoBehaviour
         // Clone parameters for runtime mutation
         runtimeParameters = data.CloneFSMParameters();
         
+        Debug.Log($"[FSMComponent] Init - aggroDistance={runtimeParameters.aggroDistance.Value}, fleeHealth={runtimeParameters.fleeHealthThreshold.Value}");
+        
         // Create state instances
         idleState = new IdleState(this, owner);
         chaseState = new ChaseState(this, owner);
@@ -60,10 +62,25 @@ public class FSMComponent : MonoBehaviour
 
     private void Update()
     {
-        if (stateMachine != null && owner != null && owner.IsAlive)
+        if (stateMachine == null)
         {
-            stateMachine.Tick();
+            Debug.LogWarning("[FSMComponent] StateMachine is null!");
+            return;
         }
+        
+        if (owner == null)
+        {
+            Debug.LogWarning("[FSMComponent] Owner is null!");
+            return;
+        }
+        
+        if (!owner.IsAlive)
+        {
+            Debug.Log("[FSMComponent] Owner is dead, not ticking FSM");
+            return;
+        }
+
+        stateMachine.Tick();
     }
 
     /// <summary>
@@ -87,22 +104,32 @@ public class FSMComponent : MonoBehaviour
 
     private float EvaluateIdle()
     {
-        // Idle has low baseline utility
-        // Increases when no threats detected
-        float targetDetected = DetectAnyTarget() ? 0f : 1f;
-        return 0.1f + (targetDetected * 0.3f);
+        // Idle utility is low when targets detected, high when safe
+        bool hasTarget = TryGetClosestTarget(out _, out _);
+        float utility = hasTarget ? 0.1f : 0.4f;
+        
+        
+        Debug.Log($"[{owner.ArchetypeId}] Idle: hasTarget={hasTarget}, utility={utility:F2}");
+
+        return utility;
+
     }
 
     private float EvaluateChase()
     {
         // Chase utility based on target detection and distance
         if (!TryGetClosestTarget(out Transform target, out float distance))
+        {
             return 0f;
+        }
         
-        float normalizedDistance = Mathf.Clamp01(distance / archetypeData.SensorRange);
+        float normalizedDistance = Mathf.Clamp01(distance / runtimeParameters.aggroDistance.Value);
         float inAggroRange = distance < runtimeParameters.aggroDistance.Value ? 1f : 0f;
+        float utility = inAggroRange * (1f - normalizedDistance) * 0.7f;
         
-        return inAggroRange * (1f - normalizedDistance) * 0.7f;
+        //Debug.Log($"[{owner.ArchetypeId}] Chase: target={target.name}, dist={distance:F2}, aggro={runtimeParameters.aggroDistance.Value}, inRange={inAggroRange}, utility={utility:F2}");
+        
+        return utility;
     }
 
     private float EvaluateFight()
@@ -111,9 +138,11 @@ public class FSMComponent : MonoBehaviour
         if (!TryGetClosestTarget(out Transform target, out float distance))
             return 0f;
         
-        float attackRange = 2f; // TODO: Make this a parameter
+        float attackRange = runtimeParameters.aggroDistance.Value * 0.3f; // Within 30% of aggro range
         float inAttackRange = distance < attackRange ? 1f : 0f;
         float healthPercent = owner.Stats.GetHealthPercent();
+        
+        //Debug.Log($"[{owner.ArchetypeId}] Fight eval: dist={distance:F2}, attackRange={attackRange:F2}, inRange={inAttackRange}, util={inAttackRange * healthPercent * 0.9f:F2}");
         
         return inAttackRange * healthPercent * 0.9f;
     }
@@ -132,7 +161,7 @@ public class FSMComponent : MonoBehaviour
     /// </summary>
     private bool DetectAnyTarget()
     {
-        Collider[] hits = Physics.OverlapSphere(
+        Collider2D[] hits = Physics2D.OverlapCircleAll(
             owner.Position,
             archetypeData.SensorRange,
             archetypeData.TargetLayer
@@ -148,7 +177,7 @@ public class FSMComponent : MonoBehaviour
         target = null;
         distance = float.MaxValue;
 
-        Collider[] hits = Physics.OverlapSphere(
+        Collider2D[] hits = Physics2D.OverlapCircleAll(
             owner.Position,
             archetypeData.SensorRange,
             archetypeData.TargetLayer

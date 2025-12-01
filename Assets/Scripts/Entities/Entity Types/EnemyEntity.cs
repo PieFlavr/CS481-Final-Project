@@ -21,11 +21,14 @@ public class EnemyEntity : BaseEntity
     {
         base.Awake();
 
+        Debug.Log("[EnemyEntity.Awake] Called");
+
         // Get or add StatsComponent
         statsComponent = GetComponent<StatsComponent>();
         if (statsComponent == null)
         {
             statsComponent = gameObject.AddComponent<StatsComponent>();
+            Debug.Log("[EnemyEntity.Awake] Added StatsComponent");
         }
 
         // Get or add FSMComponent
@@ -33,7 +36,10 @@ public class EnemyEntity : BaseEntity
         if (fsmComponent == null)
         {
             fsmComponent = gameObject.AddComponent<FSMComponent>();
+            Debug.Log("[EnemyEntity.Awake] Added FSMComponent");
         }
+
+        Debug.Log($"[EnemyEntity.Awake] Complete - stats={statsComponent != null}, fsm={fsmComponent != null}, archetype={archetypeData != null}");
 
         // Initialize stats from archetype
         if (archetypeData != null)
@@ -46,10 +52,17 @@ public class EnemyEntity : BaseEntity
     {
         base.Start();
 
+        Debug.Log($"[EnemyEntity.Start] archetypeData={archetypeData != null}, fsmComponent={fsmComponent != null}");
+
         // Initialize FSM after all components are ready
         if (archetypeData != null && fsmComponent != null)
         {
+            Debug.Log($"[EnemyEntity] Initializing FSM with archetype: {archetypeData.ArchetypeId}");
             fsmComponent.Initialize(this, archetypeData);
+        }
+        else
+        {
+            Debug.LogWarning($"[EnemyEntity] FSM init skipped - archetype={archetypeData}, fsm={fsmComponent}");
         }
     }
 

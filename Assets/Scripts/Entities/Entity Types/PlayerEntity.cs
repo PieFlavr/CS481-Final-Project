@@ -43,6 +43,18 @@ public class PlayerEntity : BaseEntity
     public override void Die()
     {
         if (!IsAlive) return;
+        
+        // Detach camera from player so it doesn't disappear on death
+        Camera mainCamera = Camera.main;
+        if (mainCamera != null && mainCamera.transform.parent == transform)
+        {
+            // Store world position before detaching
+            Vector3 cameraWorldPos = mainCamera.transform.position;
+            mainCamera.transform.parent = null;
+            // Restore to same world position after detaching
+            mainCamera.transform.position = cameraWorldPos;
+        }
+        
         // Player-specific death handling could go here (respawn, UI, etc.)
         base.Die();
     }
