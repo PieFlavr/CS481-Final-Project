@@ -15,7 +15,9 @@ public class PlayerController : MonoBehaviour
     #region Private Fields
     private Rigidbody2D rb;
     private Animator animator;
+    
     private InputManager inputManager;
+    private PlayerEntity playerEntity;
     
     // Animator parameter names
     private const string XParam = "X";
@@ -31,6 +33,7 @@ public class PlayerController : MonoBehaviour
     {
         rb = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
+        playerEntity = GetComponent<PlayerEntity>();
         
     }
 
@@ -47,6 +50,8 @@ public class PlayerController : MonoBehaviour
         // Subscribe to input events
         inputManager.OnMove += HandleMovement;
         inputManager.OnAttack += HandleAttack;
+
+        Debug.Log("[PlayerController] Initialized successfully.");
     }
 
     private void FixedUpdate()
@@ -54,7 +59,11 @@ public class PlayerController : MonoBehaviour
         // Handle movement in FixedUpdate for physics
         if (!inputManager.IsAttacking && inputManager.IsMoving)
         {
-            Vector2 movement = inputManager.MoveInput * moveSpeed;
+            float speed = moveSpeed;
+            if (playerEntity != null && playerEntity.Stats != null)
+                speed = playerEntity.Stats.Speed;
+
+            Vector2 movement = inputManager.MoveInput * speed;
             rb.linearVelocity = movement;
         }
         else

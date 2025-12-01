@@ -1,40 +1,31 @@
 using UnityEngine;
 
-public class Player : MonoBehaviour
+/// <summary>
+/// Legacy player MonoBehaviour converted to integrate with the entity system.
+/// Now inherits `PlayerEntity` (thin wrapper) so the prefab/scene can keep `Player` script attached.
+/// Removes singleton behavior; use `PlayerManager` for global game logic.
+/// </summary>
+public class Player : PlayerEntity
 {
-    private static Player Instance {get; set;}
-    [SerializeField] private int health; //Do value in inspector
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    // Compatibility helpers so other code can still call old methods.
+    public void DoDamage(float damage)
     {
-        Debug.Log("[Player] Hello World!");
-        if (Instance != null && Instance != this)
-        {
-            Debug.LogWarning("[Player] Duplicate instance detected -- annihilating it now!");
-            Destroy(gameObject);
-            return;
-        }
-        Instance = this;
-        DontDestroyOnLoad(gameObject);
+        Stats?.TakeDamage(damage);
     }
 
-    // Update is called once per frame
-    void Update()
+    public float GetHealth()
     {
+        return Stats != null ? Stats.CurrentHealth : 0f;
     }
 
-    public void DoDamage(int damage) 
+    public void ResetHealth()
     {
-        this.health -= damage;
+        Stats?.ResetHealth();
     }
 
-    public int GetHealth() 
+    // Keep Awake/Start behavior minimal; PlayerEntity/ BaseEntity handle registration and initialization.
+    protected override void Awake()
     {
-        return this.health;
-    }
-
-    public void ResetHealth() 
-    {
-        this.health = 10;
+        base.Awake();
     }
 }
