@@ -39,6 +39,13 @@ public class InputManager : MonoBehaviour
 
     // Rebinding
     //private const string RebindsKey = "InputRebinds"; //TODO: Implement input rebinding system. -L
+    
+    // Frame Gating
+
+    // NOTE (L): This is evil and stupid.
+    // I don't like this, I don't know another clean solution.
+    // This happens in the ONE possible case for 'back' and 'pause', so this works for now. -L
+    private bool pauseBackConflictThisFrame = false;
     #endregion Fields and Properties
 
     #region Unity Methods
@@ -60,6 +67,14 @@ public class InputManager : MonoBehaviour
         // Initialize & Setup Input Actions
         inputActions = new InputSystem_Actions();
         SubscribeToInputs();
+        SubscribeToGameState();
+
+        ChangeInputState(GameManager.Instance.State);
+    }
+
+    private void LateUpdate()
+    {
+        pauseBackConflictThisFrame = false;
     }
 
     private void OnEnable() => inputActions.Enable();
@@ -75,9 +90,30 @@ public class InputManager : MonoBehaviour
     {
         // Interact & UI (these are still manually subscribed)
         inputActions.Player.Interact.performed += context => OnInteract?.Invoke();
-        inputActions.Player.Pause.performed += context => OnPause?.Invoke();
+        inputActions.Player.Pause.performed += context => OnPausePerformed(context);
 
-        inputActions.UI.Back.performed += context => OnBack?.Invoke();
+        inputActions.UI.Back.performed += context => OnBackPerformed(context);
+    }
+
+    private void SubscribeToGameState()
+    {
+        GameManager.Instance.OnGameStateChanged += newState => ChangeInputState(newState);
+    }
+
+    private void ChangeInputState(GameState state)
+    {
+        switch (state)
+        {
+            case GameState.Playing:
+                EnableGameplayInput();
+                break;
+            case GameState.Paused:
+                EnableUIInput();
+                break;
+            default:
+                EnableUIInput();
+                break;
+        }
     }
 
     /// <summary>
@@ -169,6 +205,25 @@ public class InputManager : MonoBehaviour
         inputActions.UI.Enable();
     }
     #endregion Input Subscriptions
+
+    #region Input Handling
+    private void OnPausePerformed(InputAction.CallbackContext context)
+    {
+        OnPause?.Invoke();
+        pauseBackConflictThisFrame = true;
+    }
+
+    private void OnBackPerformed(InputAction.CallbackContext context)
+    {
+        if (pauseBackConflictThisFrame)
+        {
+            Debug.Log("[InputManager] Ignoring Back input due to Pause conflict this frame.");
+            return;
+        }
+        OnBack?.Invoke();
+    }
+    
+    #endregion
 
     private IEnumerator AttackRoutine()
     {
