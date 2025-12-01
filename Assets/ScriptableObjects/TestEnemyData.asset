@@ -9,13 +9,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b5ef98152d2dada40aaa2fa1a7d0798a, type: 3}
-  m_Name: PlayerData
+  m_Script: {fileID: 11500000, guid: 3a0e82eb63fc6b24b865ed383f12a612, type: 3}
+  m_Name: TestEnemyData
   m_EditorClassIdentifier: 
-  displayName: Player
+  displayName: Dummy
   prefab: {fileID: 0}
   maxHealth: 10
   speed: 3
-  damage: 5
-  startingResources: 100
-  resourceRegenPerNight: 10
+  damage: 1
+  archetypeId: generic

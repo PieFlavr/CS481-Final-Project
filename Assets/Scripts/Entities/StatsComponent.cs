@@ -29,6 +29,8 @@ public class StatsComponent : MonoBehaviour
     public float CurrentHealth => healthStat.CurrentHealth;
     public float Speed => combatStats.Speed;
     public float Damage => combatStats.BaseDamage;
+    public float AttackRange => combatStats.AttackRange;
+    public float AttackRadius => combatStats.AttackRadius;
 
     private void Awake()
     {
@@ -86,7 +88,7 @@ public class StatsComponent : MonoBehaviour
         }
 
         healthStat.Initialize(archetypeData.MaxHealth);
-        combatStats.Initialize(archetypeData.Speed, archetypeData.Damage);
+        combatStats.Initialize(archetypeData.Speed, archetypeData.Damage, archetypeData.AttackRange, archetypeData.AttackRadius);
     }
 
     /// <summary>
@@ -101,7 +103,7 @@ public class StatsComponent : MonoBehaviour
         }
 
         healthStat.Initialize(entityData.MaxHealth);
-        combatStats.Initialize(entityData.Speed, entityData.Damage);
+        combatStats.Initialize(entityData.Speed, entityData.Damage, entityData.AttackRange, entityData.AttackRadius);
     }
 
     /// <summary>
