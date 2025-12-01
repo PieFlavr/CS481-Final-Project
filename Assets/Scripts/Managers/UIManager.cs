@@ -106,26 +106,25 @@ public class UIManager : MonoBehaviour
     /// </summary>
     public void GoBack()
     {
+        if (currentOverlayPanel == null)
+        {
+            Debug.LogWarning("[UIManager] No overlay panel is open, cannot go back.");
+            return;
+        }
+
         if (navigationStack.Count == 0)
         {
-            Debug.LogWarning("[UIManager] Navigation stack is empty, cannot go back.");
+            Debug.Log("[UIManager] Navigation stack is empty, assuming on root overlay.");
+            currentOverlayPanel.Hide();
+            currentOverlayPanel = null;
             return;
         }
 
         // Hide current overlay
-        if (currentOverlayPanel != null)
-        {
-            currentOverlayPanel.Hide();
-            currentOverlayPanel = null;
-        }
+        currentOverlayPanel.Hide();
 
         // Pop and show previous panel
         currentOverlayPanel = navigationStack.Pop();
-        if (currentOverlayPanel == null)
-        {
-            Debug.LogError("[UIManager] Popped a null panel from the navigation stack!");
-            return;
-        }
         currentOverlayPanel.Show();
     }
 
@@ -181,13 +180,14 @@ public class UIManager : MonoBehaviour
         }
         return false;
     }
-    
+
     /// <summary>
     /// Checks if there is any overlay panel currently open.
     /// </summary>
     /// <returns>True if an overlay panel is open; otherwise, false.</returns>
     public bool HasOpenOverlay()
     {
+        Debug.Log("[UIManager] Checking for open overlay panel..." + (currentOverlayPanel != null));
         return currentOverlayPanel != null;
     }
     #endregion Accessors
