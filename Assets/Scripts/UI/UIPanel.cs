@@ -111,5 +111,6 @@ public enum UILayer
 {
     Default,        // Coexisting panels (HUD, notifications, etc.)
     Overlay,          // Exclusive panels that stack (pause, settings, menu, inventory, etc.)
+    Solo,           //Panels that exist by themselves (i.e. Start and End screens)
     // Add more as needed...
 }
