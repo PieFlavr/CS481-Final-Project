@@ -11,8 +11,8 @@ using Unity.Properties;
     "\nIf Rigidbody2D is not available on the [Agent] or its children, moves the Agent using its transform.",
     story: "[Agent] navigates to [Target]",
     category: "Action/Navigation",
-    id: "3bc19d3122374cc9a985d90351633310")]
-public partial class NavigateToTargetAction2D : Action
+    id: "b974c0fde450e7d922548db8a35ec75c")]
+public partial class NavigateToTarget2DAction : Action
 {
     public enum TargetPositionMode
     {
@@ -256,4 +256,5 @@ public partial class NavigateToTargetAction2D : Action
         return movementSpeed;
     }
 }
+
 
