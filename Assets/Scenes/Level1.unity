@@ -285,6 +285,16 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 50, y: -30, z: 0}
+--- !u!95 &113596708 stripped
+Animator:
+  m_CorrespondingSourceObject: {fileID: 6712895043471317450, guid: 5182201eca8d6ca429fbf2680940977d, type: 3}
+  m_PrefabInstance: {fileID: 1799378956}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &113596711 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 5377844102334081126, guid: 5182201eca8d6ca429fbf2680940977d, type: 3}
+  m_PrefabInstance: {fileID: 1799378956}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &198078462
 GameObject:
   m_ObjectHideFlags: 0
@@ -623,7 +633,7 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 8788336104150430484, guid: 0fc6ca6bfb7e55b4a83990ad3b983dcd, type: 3}
   m_PrefabInstance: {fileID: 879564171200141513}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
+  m_GameObject: {fileID: 647666744}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ab5f528ebfa24b6449035ececafe9ff2, type: 3}
@@ -5386,6 +5396,35 @@ PrefabInstance:
       propertyPath: m_Name
       value: Sorcerer (1)
       objectReference: {fileID: 0}
+    - target: {fileID: 4711377241183989205, guid: 5182201eca8d6ca429fbf2680940977d, type: 3}
+      propertyPath: 'managedReferences[7769077807023915660]'
+      value: 'Unity.Behavior Unity.Behavior.BlackboardVariable`1[[UnityEngine.GameObject,
+        UnityEngine.CoreModule]]'
+      objectReference: {fileID: 0}
+    - target: {fileID: 4711377241183989205, guid: 5182201eca8d6ca429fbf2680940977d, type: 3}
+      propertyPath: managedReferences[7769077807023915660].Name
+      value: Player
+      objectReference: {fileID: 0}
+    - target: {fileID: 4711377241183989205, guid: 5182201eca8d6ca429fbf2680940977d, type: 3}
+      propertyPath: m_BlackboardVariableOverridesList.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 4711377241183989205, guid: 5182201eca8d6ca429fbf2680940977d, type: 3}
+      propertyPath: managedReferences[7769077807023915660].m_Value
+      value: 
+      objectReference: {fileID: 647666744}
+    - target: {fileID: 4711377241183989205, guid: 5182201eca8d6ca429fbf2680940977d, type: 3}
+      propertyPath: 'm_BlackboardVariableOverridesList.Array.data[1]'
+      value: 7769077807023915660
+      objectReference: {fileID: 0}
+    - target: {fileID: 4711377241183989205, guid: 5182201eca8d6ca429fbf2680940977d, type: 3}
+      propertyPath: managedReferences[7769077807023915660].GUID.m_Value0
+      value: 11865234844797930076
+      objectReference: {fileID: 0}
+    - target: {fileID: 4711377241183989205, guid: 5182201eca8d6ca429fbf2680940977d, type: 3}
+      propertyPath: managedReferences[7769077807023915660].GUID.m_Value1
+      value: 11945360761588541482
+      objectReference: {fileID: 0}
     - target: {fileID: 5377844102334081126, guid: 5182201eca8d6ca429fbf2680940977d, type: 3}
       propertyPath: m_LocalPosition.x
       value: 14.53
@@ -5431,6 +5470,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 5182201eca8d6ca429fbf2680940977d, type: 3}
+--- !u!1 &647666744 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3088006721541736512, guid: 0fc6ca6bfb7e55b4a83990ad3b983dcd, type: 3}
+  m_PrefabInstance: {fileID: 879564171200141513}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &749777850
 GameObject:
   m_ObjectHideFlags: 0
@@ -10430,6 +10474,89 @@ PrefabInstance:
       propertyPath: m_Name
       value: Sorcerer
       objectReference: {fileID: 0}
+    - target: {fileID: 4711377241183989205, guid: 5182201eca8d6ca429fbf2680940977d, type: 3}
+      propertyPath: 'managedReferences[7769077807023915587]'
+      value: 'Unity.Behavior Unity.Behavior.SharedBlackboardVariable`1[[UnityEngine.GameObject,
+        UnityEngine.CoreModule]]'
+      objectReference: {fileID: 0}
+    - target: {fileID: 4711377241183989205, guid: 5182201eca8d6ca429fbf2680940977d, type: 3}
+      propertyPath: 'managedReferences[7769077807023915724]'
+      value: 'Unity.Behavior Unity.Behavior.BlackboardVariable`1[[UnityEngine.Animator,
+        UnityEngine.AnimationModule]]'
+      objectReference: {fileID: 0}
+    - target: {fileID: 4711377241183989205, guid: 5182201eca8d6ca429fbf2680940977d, type: 3}
+      propertyPath: 'managedReferences[7769077807023915779]'
+      value: 'Unity.Behavior Unity.Behavior.BlackboardVariable`1[[UnityEngine.Transform,
+        UnityEngine.CoreModule]]'
+      objectReference: {fileID: 0}
+    - target: {fileID: 4711377241183989205, guid: 5182201eca8d6ca429fbf2680940977d, type: 3}
+      propertyPath: managedReferences[7769077807023915587].Name
+      value: Player
+      objectReference: {fileID: 0}
+    - target: {fileID: 4711377241183989205, guid: 5182201eca8d6ca429fbf2680940977d, type: 3}
+      propertyPath: managedReferences[7769077807023915724].Name
+      value: Animator
+      objectReference: {fileID: 0}
+    - target: {fileID: 4711377241183989205, guid: 5182201eca8d6ca429fbf2680940977d, type: 3}
+      propertyPath: managedReferences[7769077807023915779].Name
+      value: Transform
+      objectReference: {fileID: 0}
+    - target: {fileID: 4711377241183989205, guid: 5182201eca8d6ca429fbf2680940977d, type: 3}
+      propertyPath: m_BlackboardVariableOverridesList.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 4711377241183989205, guid: 5182201eca8d6ca429fbf2680940977d, type: 3}
+      propertyPath: managedReferences[7769077807023915587].m_Value
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 4711377241183989205, guid: 5182201eca8d6ca429fbf2680940977d, type: 3}
+      propertyPath: managedReferences[7769077807023915724].m_Value
+      value: 
+      objectReference: {fileID: 113596708}
+    - target: {fileID: 4711377241183989205, guid: 5182201eca8d6ca429fbf2680940977d, type: 3}
+      propertyPath: managedReferences[7769077807023915779].m_Value
+      value: 
+      objectReference: {fileID: 113596711}
+    - target: {fileID: 4711377241183989205, guid: 5182201eca8d6ca429fbf2680940977d, type: 3}
+      propertyPath: 'm_BlackboardVariableOverridesList.Array.data[1]'
+      value: 7769077807023915587
+      objectReference: {fileID: 0}
+    - target: {fileID: 4711377241183989205, guid: 5182201eca8d6ca429fbf2680940977d, type: 3}
+      propertyPath: 'm_BlackboardVariableOverridesList.Array.data[2]'
+      value: 7769077807023915724
+      objectReference: {fileID: 0}
+    - target: {fileID: 4711377241183989205, guid: 5182201eca8d6ca429fbf2680940977d, type: 3}
+      propertyPath: 'm_BlackboardVariableOverridesList.Array.data[3]'
+      value: 7769077807023915779
+      objectReference: {fileID: 0}
+    - target: {fileID: 4711377241183989205, guid: 5182201eca8d6ca429fbf2680940977d, type: 3}
+      propertyPath: managedReferences[7769077807023915587].GUID.m_Value0
+      value: 11865234844797930076
+      objectReference: {fileID: 0}
+    - target: {fileID: 4711377241183989205, guid: 5182201eca8d6ca429fbf2680940977d, type: 3}
+      propertyPath: managedReferences[7769077807023915587].GUID.m_Value1
+      value: 11945360761588541482
+      objectReference: {fileID: 0}
+    - target: {fileID: 4711377241183989205, guid: 5182201eca8d6ca429fbf2680940977d, type: 3}
+      propertyPath: managedReferences[7769077807023915724].GUID.m_Value0
+      value: 7750919354375436381
+      objectReference: {fileID: 0}
+    - target: {fileID: 4711377241183989205, guid: 5182201eca8d6ca429fbf2680940977d, type: 3}
+      propertyPath: managedReferences[7769077807023915724].GUID.m_Value1
+      value: 7800518913354446411
+      objectReference: {fileID: 0}
+    - target: {fileID: 4711377241183989205, guid: 5182201eca8d6ca429fbf2680940977d, type: 3}
+      propertyPath: managedReferences[7769077807023915779].GUID.m_Value0
+      value: 12757696006943976977
+      objectReference: {fileID: 0}
+    - target: {fileID: 4711377241183989205, guid: 5182201eca8d6ca429fbf2680940977d, type: 3}
+      propertyPath: managedReferences[7769077807023915779].GUID.m_Value1
+      value: 7294824946381704193
+      objectReference: {fileID: 0}
+    - target: {fileID: 4711377241183989205, guid: 5182201eca8d6ca429fbf2680940977d, type: 3}
+      propertyPath: managedReferences[7769077807023915587].m_SharedVariablesRuntimeAsset
+      value: 
+      objectReference: {fileID: -7323305027378326826, guid: fd7fd1f0d239a42e899cf8f11a5784cf, type: 2}
     - target: {fileID: 5377844102334081126, guid: 5182201eca8d6ca429fbf2680940977d, type: 3}
       propertyPath: m_LocalPosition.x
       value: 16.05
