@@ -15,9 +15,10 @@ GameObject:
   - component: {fileID: 1382953170604215955}
   - component: {fileID: 316648135654111875}
   - component: {fileID: 7994111177538818634}
+  - component: {fileID: 4711377241183989205}
   m_Layer: 9
   m_Name: Sorcerer
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -175,7 +176,7 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0, y: 0}
+  m_Offset: {x: 0, y: -0.18}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
@@ -185,7 +186,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 2, y: 2}
+  m_Size: {x: 0.36, y: 0.83}
   m_EdgeRadius: 0
 --- !u!114 &316648135654111875
 MonoBehaviour:
@@ -213,3 +214,32 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   archetypeData: {fileID: 11400000, guid: c156f2f7cb7ad0143987a86c897eb0d7, type: 2}
+--- !u!114 &4711377241183989205
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 787262111239574603}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f0038c16c34866b4f9e25c9c0dc0f7e6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Graph: {fileID: -4784206797361727644, guid: fd7fd1f0d239a42e899cf8f11a5784cf, type: 2}
+  m_BlackboardVariableOverridesList:
+  - rid: 7769077807023915262
+  m_OriginalGraph: {fileID: -4784206797361727644, guid: fd7fd1f0d239a42e899cf8f11a5784cf, type: 2}
+  m_IsInitialised: 0
+  m_IsStarted: 0
+  references:
+    version: 2
+    RefIds:
+    - rid: 7769077807023915262
+      type: {class: 'BlackboardVariable`1[[UnityEngine.GameObject, UnityEngine.CoreModule]]', ns: Unity.Behavior, asm: Unity.Behavior}
+      data:
+        GUID:
+          m_Value0: 1
+          m_Value1: 0
+        Name: Self
+        m_Value: {fileID: 787262111239574603}
