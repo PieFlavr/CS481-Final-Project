@@ -6,13 +6,13 @@ using Unity.Properties;
 
 [Serializable, GeneratePropertyBag]
 [NodeDescription(
-    name: "Navigate To Target 2D",
-    description: "Navigates a GameObject towards another GameObject using its Rigidbody2D." +
+    name: "Navigate Away From Target 2D",
+    description: "Navigates a GameObject away from another GameObject using its Rigidbody2D." +
     "\nIf Rigidbody2D is not available on the [Agent] or its children, moves the Agent using its transform.",
-    story: "[Agent] navigates to [Target]",
+    story: "[Agent] navigates away from [Target]",
     category: "Action/Navigation",
-    id: "b974c0fde450e7d922548db8a35ec75c")]
-public partial class NavigateToTarget2DAction : Action
+     id: "01572d38b08b5d9357eeb494faaecef6")]
+public partial class NavigateAwayFromTarget2DAction : Action
 {
     public enum TargetPositionMode
     {
@@ -27,7 +27,7 @@ public partial class NavigateToTarget2DAction : Action
     [SerializeReference] public BlackboardVariable<float> DistanceThreshold = new BlackboardVariable<float>(0.2f);
     [SerializeReference] public BlackboardVariable<string> AnimatorSpeedParam = new BlackboardVariable<string>("SpeedMagnitude");
 
-    // This will only be used in movement without a rigidbody.
+    // This will only be used in movement without a Rigidbody.
     [SerializeReference] public BlackboardVariable<float> SlowDownDistance = new BlackboardVariable<float>(1.0f);
     [Tooltip("Defines how the target position is determined for navigation:" +
         "\n- ClosestPointOnAnyCollider: Use the closest point on any collider, including child objects" +
@@ -37,7 +37,6 @@ public partial class NavigateToTarget2DAction : Action
 
     private Rigidbody2D m_Rigidbody;
     private Animator m_Animator;
-    private Vector3 m_LastTargetPosition;
     private Vector3 m_ColliderAdjustedTargetPosition;
     [CreateProperty] private float m_OriginalStoppingDistance = -1f;
     [CreateProperty] private Vector2? m_OriginalVelocity = null;
@@ -61,33 +60,18 @@ public partial class NavigateToTarget2DAction : Action
             return Status.Failure;
         }
 
-        // Check if the target position has changed.
-        bool boolUpdateTargetPosition = !Mathf.Approximately(m_LastTargetPosition.x, Target.Value.transform.position.x)
-            || !Mathf.Approximately(m_LastTargetPosition.y, Target.Value.transform.position.y)
-            || !Mathf.Approximately(m_LastTargetPosition.z, Target.Value.transform.position.z);
+        m_ColliderAdjustedTargetPosition = GetPositionColliderAdjusted();
+        float distance = Vector2.Distance(Agent.Value.transform.position, Target.Value.transform.position);
+        bool tooFar = distance > (DistanceThreshold + m_ColliderOffset);
 
-        if (boolUpdateTargetPosition)
-        {
-            m_LastTargetPosition = Target.Value.transform.position;
-            m_ColliderAdjustedTargetPosition = GetPositionColliderAdjusted();
-        }
-
-        float distance = Vector2.Distance(Agent.Value.transform.position, m_LastTargetPosition);
-        bool destinationReached = distance <= (DistanceThreshold + m_ColliderOffset);
-
-        if (destinationReached)
+        if (tooFar)
         {
             return Status.Success;
         }
-        else // transform-based movement
+        else
         {
-            m_CurrentSpeed = SimpleMoveTowardsLocation(Agent.Value.transform, m_ColliderAdjustedTargetPosition,
-                Speed, distance, SlowDownDistance);
+            m_CurrentSpeed = SimpleMoveAwayFromLocation(Agent.Value.transform, m_ColliderAdjustedTargetPosition, Speed, distance, SlowDownDistance);
         }
-        // else if (boolUpdateTargetPosition) // navmesh-based destination update (if needed)
-        // {
-        //     m_Rigidbody.position = m_ColliderAdjustedTargetPosition;
-        // }
 
         UpdateAnimatorSpeed();
 
@@ -97,19 +81,13 @@ public partial class NavigateToTarget2DAction : Action
     protected override void OnEnd()
     {
         UpdateAnimatorSpeed(0f);
-
-        if (m_Rigidbody != null)
-        {
-            // m_Rigidbody.linearVelocity = m_OriginalVelocity.Value;
-        }
-
         m_Rigidbody = null;
         m_Animator = null;
     }
 
     protected override void OnDeserialize()
     {
-        // If using a navigation mesh, we need to reset default value before Initialize.
+        // Reset rigidbody velocity.
         m_Rigidbody = Agent.Value.GetComponent<Rigidbody2D>();
         if (m_Rigidbody != null)
         {
@@ -122,20 +100,18 @@ public partial class NavigateToTarget2DAction : Action
 
     private Status Initialize()
     {
-        m_LastTargetPosition = Target.Value.transform.position;
         m_ColliderAdjustedTargetPosition = GetPositionColliderAdjusted();
 
         // Add the extents of the colliders to the stopping distance.
         m_ColliderOffset = 0.0f;
-        Collider agentCollider = Agent.Value.GetComponent<Collider>();
-        if (agentCollider != null)
+        if (Agent.Value.TryGetComponent<Collider>(out var agentCollider))
         {
             Vector3 colliderExtents = agentCollider.bounds.extents;
             m_ColliderOffset += Mathf.Max(colliderExtents.x, colliderExtents.z);
         }
 
         float distance = Vector2.Distance(Agent.Value.transform.position, m_ColliderAdjustedTargetPosition);
-        if (distance <= (DistanceThreshold + m_ColliderOffset))
+        if (distance >= (DistanceThreshold + m_ColliderOffset))
         {
             return Status.Success;
         }
@@ -182,54 +158,50 @@ public partial class NavigateToTarget2DAction : Action
     /// This helps eliminate animator jitter when the agent is nearly stationary or making very minor adjustments.</param>
     /// <param name="explicitSpeed">Optional explicit speed value to set (-1 means use movement speed)</param>
     /// <returns>True if animator was updated, false otherwise</returns>
-    private bool UpdateAnimatorSpeed(Animator animator, string speedParameterName, Rigidbody2D rigidbody2D, float currentSpeed, float minSpeedThreshold = 0.1f,
-        float explicitSpeed = -1f)
+    private bool UpdateAnimatorSpeed(Animator animator, string speedParameterName, Rigidbody2D rigidbody2D, float currentSpeed, float minSpeedThreshold = 0.1f, float explicitSpeed = -1f)
     {
         if (animator == null || string.IsNullOrEmpty(speedParameterName))
         {
             return false;
         }
 
-        float speedValue = 0;
+        float speedValue;
         if (explicitSpeed >= 0)
-        {
             speedValue = explicitSpeed;
-        }
-        // else if (rigidbody2D != null)
-        // {
-        // speedValue = rigidbody2D.linearVelocity.magnitude;
-        // }
+
+        else if (rigidbody2D != null)
+            speedValue = rigidbody2D.linearVelocity.magnitude;
+
         else
-        {
             speedValue = currentSpeed;
-        }
 
         if (speedValue <= minSpeedThreshold)
-        {
             speedValue = 0;
-        }
 
         animator.SetFloat(speedParameterName, speedValue);
         return true;
     }
 
     /// <summary>
-    /// Moves a transform towards a target position with optional slowdown near destination
+    /// Moves a transform away from a target position with optional slowdown near destination
     /// </summary>
     /// <param name="agentTransform">The transform to move</param>
-    /// <param name="targetLocation">The target position to move towards</param>
+    /// <param name="avoidLocation">The target position to move away from</param>
     /// <param name="speed">Maximum movement speed</param>
     /// <param name="distance">Current distance to target</param>
     /// <param name="slowDownDistance">Distance at which to begin slowing down (0 for no slowdown)</param>
     /// <param name="minSpeedRatio">Minimum speed ratio when slowing down (0.1 = 10% of max speed)</param>
     /// <returns>Actual speed used for movement</returns>
-    private float SimpleMoveTowardsLocation(Transform agentTransform, Vector2 targetLocation, float speed, float distance, float slowDownDistance = 0.0f,
+    private float SimpleMoveAwayFromLocation(
+        Transform agentTransform,
+        Vector2 avoidLocation,
+        float speed,
+        float distance,
+        float slowDownDistance = 0.0f,
         float minSpeedRatio = 0.1f)
     {
         if (agentTransform == null)
-        {
             return 0f;
-        }
 
         Vector2 agentPosition = agentTransform.position;
         float movementSpeed = speed;
@@ -241,7 +213,7 @@ public partial class NavigateToTarget2DAction : Action
             movementSpeed = Mathf.Max(speed * minSpeedRatio, speed * ratio);
         }
 
-        Vector2 toDestination = targetLocation - agentPosition;
+        Vector2 toDestination = agentPosition - avoidLocation;
         if (toDestination.sqrMagnitude > 0.0001f)
         {
             toDestination.Normalize();
@@ -254,5 +226,4 @@ public partial class NavigateToTarget2DAction : Action
         return movementSpeed;
     }
 }
-
 

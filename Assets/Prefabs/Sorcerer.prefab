@@ -18,7 +18,7 @@ GameObject:
   - component: {fileID: 4711377241183989205}
   m_Layer: 9
   m_Name: Sorcerer
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -176,7 +176,7 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0, y: 0}
+  m_Offset: {x: 0, y: -0.18}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
@@ -186,7 +186,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 2, y: 2}
+  m_Size: {x: 0.36, y: 0.83}
   m_EdgeRadius: 0
 --- !u!114 &316648135654111875
 MonoBehaviour:
@@ -229,8 +229,6 @@ MonoBehaviour:
   m_Graph: {fileID: -4784206797361727644, guid: fd7fd1f0d239a42e899cf8f11a5784cf, type: 2}
   m_BlackboardVariableOverridesList:
   - rid: 7769077807023915262
-  - rid: 7769077807023915780
-  - rid: 7769077807023915781
   m_OriginalGraph: {fileID: -4784206797361727644, guid: fd7fd1f0d239a42e899cf8f11a5784cf, type: 2}
   m_IsInitialised: 0
   m_IsStarted: 0
@@ -245,19 +243,3 @@ MonoBehaviour:
           m_Value1: 0
         Name: Self
         m_Value: {fileID: 787262111239574603}
-    - rid: 7769077807023915780
-      type: {class: 'BlackboardVariable`1[[UnityEngine.Transform, UnityEngine.CoreModule]]', ns: Unity.Behavior, asm: Unity.Behavior}
-      data:
-        GUID:
-          m_Value0: 12757696006943976977
-          m_Value1: 7294824946381704193
-        Name: Transform
-        m_Value: {fileID: 5377844102334081126}
-    - rid: 7769077807023915781
-      type: {class: 'BlackboardVariable`1[[UnityEngine.Animator, UnityEngine.AnimationModule]]', ns: Unity.Behavior, asm: Unity.Behavior}
-      data:
-        GUID:
-          m_Value0: 7750919354375436381
-          m_Value1: 7800518913354446411
-        Name: Animator
-        m_Value: {fileID: 6712895043471317450}
