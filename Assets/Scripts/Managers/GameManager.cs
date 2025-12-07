@@ -30,6 +30,16 @@ public class GameManager : MonoBehaviour
     {
         SubscribeToInputs();
         AudioManager.Instance.PlayBGM("TestBGM");
+        
+        // Open HUD panels (health bar, etc.)
+        if (UIManager.Instance != null)
+        {
+            UIManager.Instance.OpenPanel("HealthPanel");  // Note: panel name is "HealthPanel" not "HealthBarPanel"
+        }
+        else
+        {
+            Debug.LogError("[GameManager] UIManager instance is null!");
+        }
     }
 
     void Initialize()

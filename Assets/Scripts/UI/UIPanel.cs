@@ -88,6 +88,11 @@ public abstract class UIPanel : MonoBehaviour
             Debug.LogError($"[UIPanel] CanvasGroup component missing on panel {panelName}!");
             canvasGroup = gameObject.AddComponent<CanvasGroup>();        
         }
+        
+        // Ensure proper initial state
+        isVisible = false;
+        canvasGroup.alpha = 0f;
+        canvasGroup.blocksRaycasts = false;
     }
 
     #endregion Panel Behavior Methods
