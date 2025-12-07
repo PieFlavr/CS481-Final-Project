@@ -89,7 +89,7 @@ public class GameManager : MonoBehaviour
             // NOTE (L): Repeated twice in HandlePauseInput() for a reason
             // This is because in the case "Back" and "Pause" are different binds :P. -L
             
-            if (State == GameState.Paused && !UIManager.Instance.IsPanelOpen("PauseMenu"))
+            if (State == GameState.Paused && !UIManager.Instance.IsPanelOpen("PausePanel"))
             {
                 ChangeState(GameState.Playing);
             }
@@ -101,12 +101,12 @@ public class GameManager : MonoBehaviour
         Debug.Log("[GameManager] Pause input received.");
         if (State == GameState.Playing)
         {
-            UIManager.Instance.OpenPanel("PauseMenu");
+            UIManager.Instance.OpenPanel("PausePanel");
             ChangeState(GameState.Paused);
         } 
-        else if (State == GameState.Paused && UIManager.Instance.IsPanelOpen("PauseMenu"))
+        else if (State == GameState.Paused && UIManager.Instance.IsPanelOpen("PausePanel"))
         {
-            UIManager.Instance.ClosePanel("PauseMenu");
+            UIManager.Instance.ClosePanel("PausePanel");
             ChangeState(GameState.Playing);
         }
     }

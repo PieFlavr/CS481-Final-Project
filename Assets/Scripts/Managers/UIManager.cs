@@ -190,6 +190,15 @@ public class UIManager : MonoBehaviour
         Debug.Log("[UIManager] Checking for open overlay panel..." + (currentOverlayPanel != null));
         return currentOverlayPanel != null;
     }
+
+    /// <summary>
+    /// Checks if the game is currently paused (PausePanel is open).
+    /// </summary>
+    /// <returns>True if the game is paused; otherwise, false.</returns>
+    public bool IsGamePaused()
+    {
+        return IsPanelOpen("PausePanel");
+    }
     #endregion Accessors
 
 
