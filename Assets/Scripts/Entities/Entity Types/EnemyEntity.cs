@@ -9,6 +9,7 @@ public class EnemyEntity : BaseEntity
     [SerializeField] private ArchetypeData archetypeData;
 
     private StatsComponent statsComponent;
+    private EnemiesAnimator enemiesAnimator;
 
     public override EntityType Type => EntityType.Enemy;
     public string ArchetypeId => archetypeData?.ArchetypeId ?? "unknown";
@@ -24,6 +25,8 @@ public class EnemyEntity : BaseEntity
         {
             statsComponent = gameObject.AddComponent<StatsComponent>();
         }
+
+        enemiesAnimator = GetComponent<EnemiesAnimator>();
 
         if (archetypeData != null)
         {
@@ -50,7 +53,12 @@ public class EnemyEntity : BaseEntity
     {
         if (!IsAlive) return;
 
-        // TODO: Play death animation, disable collision, etc.
+        // Play death animation
+        if (enemiesAnimator != null)
+        {
+            enemiesAnimator.SetDead();
+        }
+
         base.Die();
     }
 
@@ -62,6 +70,13 @@ public class EnemyEntity : BaseEntity
     public void TakeDamage(float damage)
     {
         if (!IsAlive || statsComponent == null) return;
+        
+        // Play hurt animation
+        if (enemiesAnimator != null)
+        {
+            enemiesAnimator.SetHurt();
+        }
+        
         statsComponent.TakeDamage(damage);
     }
 

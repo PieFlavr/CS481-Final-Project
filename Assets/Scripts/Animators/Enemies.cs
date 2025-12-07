@@ -2,20 +2,15 @@ using UnityEngine;
 
 /// <summary>
 /// Controls enemy animation states through an Animator component.
-/// Attach this script to any enemy prefab that has an Animator with the following boolean parameters:
-/// - isDead: Triggers death animation (transitions to Exit)
-/// - isDamage: Triggers hit/damage animation
-/// - isRunning: Triggers running animation
-/// - isWalking: Triggers walking animation
-/// - isAttacking: Triggers attack animation
-/// - isStanding: Triggers idle/standing animation (default state)
+/// Attach this script to any enemy prefab that has an Animator with the following parameters:
+/// - isDead (bool): Triggers death animation (transitions to Exit)
+/// - IsHurt (trigger): Triggers hit/damage animation
+/// - IsAttack (trigger): Triggers attack animation
+/// - SpeedMagnitude (float): Controls movement animations (0 = stand, 0-0.5 = walk, >0.5 = run)
 /// 
-/// MOVEMENT STATE TRANSITIONS:
-/// - Standing ↔ Walking (both directions allowed)
-/// - Walking ↔ Running (both directions allowed)
-/// - Running → Standing (can skip walking when stopping)
-/// - Standing → Running (NOT allowed - must go Standing → Walking → Running)
+/// This script automatically updates the SpeedMagnitude based on the Rigidbody2D velocity.
 /// </summary>
+[RequireComponent(typeof(Rigidbody2D))]
 public class EnemiesAnimator : MonoBehaviour
 {
     /// <summary>
@@ -24,17 +19,25 @@ public class EnemiesAnimator : MonoBehaviour
     [Tooltip("The Animator component controlling this enemy's animations. Auto-assigned if left empty.")]
     public Animator animator;
 
+    /// <summary>
+    /// Reference to the Rigidbody2D component for reading velocity.
+    /// </summary>
+    private Rigidbody2D rb;
+
+    /// <summary>
+    /// Cached reference to the player transform for facing direction.
+    /// </summary>
+    private Transform playerTransform;
+
     // Animator parameter names - must match exactly what's in the Animator Controller
     private static readonly string PARAM_IS_DEAD = "isDead";
-    private static readonly string PARAM_IS_DAMAGE = "isDamage";
-    private static readonly string PARAM_IS_RUNNING = "isRunning";
-    private static readonly string PARAM_IS_WALKING = "isWalking";
-    private static readonly string PARAM_IS_ATTACKING = "isAttacking";
-    private static readonly string PARAM_IS_STANDING = "isStanding";
+    private static readonly string PARAM_IS_HURT = "IsHurt";
+    private static readonly string PARAM_IS_ATTACK = "IsAttack";
+    private static readonly string PARAM_SPEED_MAGNITUDE = "SpeedMagnitude";
 
     /// <summary>
     /// Called once before the first frame update.
-    /// Automatically fetches the Animator component if not assigned in the Inspector.
+    /// Automatically fetches the Animator and Rigidbody2D components if not assigned.
     /// </summary>
     void Start()
     {
@@ -47,34 +50,67 @@ public class EnemiesAnimator : MonoBehaviour
         {
             Debug.LogError("EnemiesAnimator: No Animator component found on " + gameObject.name);
         }
+
+        rb = GetComponent<Rigidbody2D>();
+        if (rb == null)
+        {
+            Debug.LogError("EnemiesAnimator: No Rigidbody2D component found on " + gameObject.name);
+        }
+
+        // Find the player
+        var player = FindAnyObjectByType<PlayerEntity>();
+        if (player != null)
+        {
+            playerTransform = player.transform;
+        }
     }
 
     /// <summary>
-    /// Clears movement-related states (standing, walking, running).
-    /// Used internally before setting a new movement state.
+    /// Updates the SpeedMagnitude parameter based on the enemy's velocity every frame.
+    /// This automatically handles stand/walk/run transitions.
+    /// Also flips the sprite to face the player.
     /// </summary>
-    private void ClearMovementStates()
+    void Update()
     {
-        if (animator == null) return;
+        if (animator == null || rb == null || IsDead()) return;
 
-        animator.SetBool(PARAM_IS_RUNNING, false);
-        animator.SetBool(PARAM_IS_WALKING, false);
-        animator.SetBool(PARAM_IS_STANDING, false);
+        // Calculate speed magnitude from velocity
+        float speedMagnitude = rb.linearVelocity.magnitude;
+        animator.SetFloat(PARAM_SPEED_MAGNITUDE, speedMagnitude);
+
+        // Face the player (flip sprite based on relative position)
+        if (playerTransform != null)
+        {
+            float directionToPlayer = playerTransform.position.x - transform.position.x;
+            
+            // Flip sprite: if player is to the left (negative direction), flip to face left
+            if (directionToPlayer < 0)
+            {
+                transform.localScale = new Vector3(-Mathf.Abs(transform.localScale.x), transform.localScale.y, transform.localScale.z);
+            }
+            // If player is to the right (positive direction), face right
+            else if (directionToPlayer > 0)
+            {
+                transform.localScale = new Vector3(Mathf.Abs(transform.localScale.x), transform.localScale.y, transform.localScale.z);
+            }
+        }
     }
 
     /// <summary>
     /// Triggers the death animation. This is a terminal state that transitions to Exit.
     /// Call this when the enemy's health reaches zero.
     /// Can be triggered from any state.
+    /// Maintains current facing direction by clearing player reference.
     /// </summary>
     public void SetDead()
     {
         if (animator == null) return;
 
-        ClearMovementStates();
-        animator.SetBool(PARAM_IS_DAMAGE, false);
-        animator.SetBool(PARAM_IS_ATTACKING, false);
+        animator.SetFloat(PARAM_SPEED_MAGNITUDE, 0);
         animator.SetBool(PARAM_IS_DEAD, true);
+        
+        // Stop facing the player when dead
+        playerTransform = null;
     }
 
     /// <summary>
@@ -82,88 +118,20 @@ public class EnemiesAnimator : MonoBehaviour
     /// Call this when the enemy takes damage but is not killed.
     /// Can be triggered from any state (via Any State transition).
     /// </summary>
-    public void SetDamaged()
+    public void SetHurt()
     {
-        if (animator == null) return;
-
-        ClearMovementStates();
-        animator.SetBool(PARAM_IS_ATTACKING, false);
-        animator.SetBool(PARAM_IS_DAMAGE, true);
-    }
-
-    /// <summary>
-    /// Triggers the running animation.
-    /// Call this when the enemy is moving at full speed (e.g., chasing the player).
-    /// REQUIREMENT: Must currently be walking. Cannot go directly from standing or damaged to running.
-    /// </summary>
-    /// <returns>True if transition was successful, false if not allowed (not currently walking).</returns>
-    public bool SetRunning()
-    {
-        if (animator == null) return false;
-
-        // Can only transition to running from walking (not from standing or damaged)
-        if (!IsWalking())
-        {
-            Debug.LogWarning("EnemiesAnimator: Cannot run - must be walking first. Cannot run from standing or damaged state.");
-            return false;
-        }
-
-        ClearMovementStates();
-        animator.SetBool(PARAM_IS_RUNNING, true);
-        return true;
-    }
-
-    /// <summary>
-    /// Triggers the walking animation.
-    /// Call this when the enemy is moving at normal/patrol speed.
-    /// Can transition from standing, running, OR damaged states.
-    /// </summary>
-    /// <returns>True if transition was successful, false if not allowed.</returns>
-    public bool SetWalking()
-    {
-        if (animator == null) return false;
-
-        // Can transition to walking from standing, running, or damaged
-        if (!IsStanding() && !IsRunning() && !IsDamaged())
-        {
-            Debug.LogWarning("EnemiesAnimator: Cannot walk - must be standing, running, or damaged first.");
-            return false;
-        }
-
-        ClearMovementStates();
-        animator.SetBool(PARAM_IS_DAMAGE, false);
-        animator.SetBool(PARAM_IS_WALKING, true);
-        return true;
+        if (animator == null || IsDead()) return;
+        animator.SetTrigger(PARAM_IS_HURT);
     }
 
     /// <summary>
     /// Triggers the attack animation.
     /// Call this when the enemy performs an attack action.
-    /// Can be triggered from standing, walking, or running states.
     /// </summary>
-    public void SetAttacking()
+    public void SetAttack()
     {
-        if (animator == null) return;
-
-        ClearMovementStates();
-        animator.SetBool(PARAM_IS_DAMAGE, false);
-        animator.SetBool(PARAM_IS_ATTACKING, true);
-    }
-
-    /// <summary>
-    /// Triggers the standing/idle animation.
-    /// Call this when the enemy is stationary and not performing any action.
-    /// This is the default state the animator enters from Entry.
-    /// Can be set from ANY movement state (walking, running) OR from damaged state.
-    /// </summary>
-    public void SetStanding()
-    {
-        if (animator == null) return;
-
-        ClearMovementStates();
-        animator.SetBool(PARAM_IS_ATTACKING, false);
-        animator.SetBool(PARAM_IS_DAMAGE, false);
-        animator.SetBool(PARAM_IS_STANDING, true);
+        if (animator == null || IsDead()) return;
+        animator.SetTrigger(PARAM_IS_ATTACK);
     }
 
     /// <summary>
@@ -176,47 +144,11 @@ public class EnemiesAnimator : MonoBehaviour
     }
 
     /// <summary>
-    /// Checks if the enemy is currently playing the damage animation.
+    /// Gets the current speed magnitude value from the animator.
     /// </summary>
-    /// <returns>True if the isDamage parameter is set, false otherwise.</returns>
-    public bool IsDamaged()
+    /// <returns>Current speed magnitude (0 = standing, 0-0.5 = walking, >0.5 = running).</returns>
+    public float GetSpeedMagnitude()
     {
-        return animator != null && animator.GetBool(PARAM_IS_DAMAGE);
-    }
-
-    /// <summary>
-    /// Checks if the enemy is currently running.
-    /// </summary>
-    /// <returns>True if the isRunning parameter is set, false otherwise.</returns>
-    public bool IsRunning()
-    {
-        return animator != null && animator.GetBool(PARAM_IS_RUNNING);
-    }
-
-    /// <summary>
-    /// Checks if the enemy is currently walking.
-    /// </summary>
-    /// <returns>True if the isWalking parameter is set, false otherwise.</returns>
-    public bool IsWalking()
-    {
-        return animator != null && animator.GetBool(PARAM_IS_WALKING);
-    }
-
-    /// <summary>
-    /// Checks if the enemy is currently attacking.
-    /// </summary>
-    /// <returns>True if the isAttacking parameter is set, false otherwise.</returns>
-    public bool IsAttacking()
-    {
-        return animator != null && animator.GetBool(PARAM_IS_ATTACKING);
-    }
-
-    /// <summary>
-    /// Checks if the enemy is currently standing/idle.
-    /// </summary>
-    /// <returns>True if the isStanding parameter is set, false otherwise.</returns>
-    public bool IsStanding()
-    {
-        return animator != null && animator.GetBool(PARAM_IS_STANDING);
+        return animator != null ? animator.GetFloat(PARAM_SPEED_MAGNITUDE) : 0f;
     }
 }
