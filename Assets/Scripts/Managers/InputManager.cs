@@ -89,7 +89,10 @@ public class InputManager : MonoBehaviour
     private void SubscribeToInputs()
     {
         // Interact & UI (these are still manually subscribed)
-        inputActions.Player.Interact.performed += context => OnInteract?.Invoke();
+        inputActions.Player.Interact.performed += context => {
+            Debug.Log("[InputManager] Interact input received.");
+            OnInteract?.Invoke();
+        };
         inputActions.Player.Pause.performed += context => OnPausePerformed(context);
         inputActions.Player.Move.performed += context => OnMoveAction(context);
         inputActions.Player.Attack.performed += context => OnAttackAction(context);
@@ -215,12 +218,14 @@ public class InputManager : MonoBehaviour
 
     public void EnableGameplayInput()
     {
+        Debug.Log("[InputManager] Switching to Gameplay Input.");
         inputActions.Player.Enable();
         inputActions.UI.Disable();
     }
 
     public void EnableUIInput()
     {
+        Debug.Log("[InputManager] Switching to UI Input.");
         inputActions.Player.Disable();
         inputActions.UI.Enable();
     }

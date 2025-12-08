@@ -54,6 +54,16 @@ public class PlayerInteractionManager : MonoBehaviour
         }
 
         Debug.Log($"[PlayerInteractionManager] Found and registered {registeredInteractables.Count} player interactables.");
+
+        // Subscribe to interact input
+        if (InputManager.Instance != null)
+        {
+            InputManager.Instance.OnInteract += TryInteract;
+        }
+        else
+        {
+            Debug.LogError("[PlayerInteractionManager] InputManager instance not found!");
+        }
     }
 
     private void Update()
@@ -143,9 +153,11 @@ public class PlayerInteractionManager : MonoBehaviour
     /// <summary>
     /// Attempt to interact with the nearest interactable.
     /// Call this from InputManager when player presses interact key.
+    /// Should be easily refactored for different interact keys. 
     /// </summary>
     public void TryInteract()
     {
+        Debug.Log("[PlayerInteractionManager] Attempting to interact with nearest interactable.");
         if (nearestInteractable == null)
         {
             Debug.LogWarning("[PlayerInteractionManager] No interactable in range to interact with.");

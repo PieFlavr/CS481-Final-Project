@@ -29,6 +29,7 @@ public class PromptDisplay : MonoBehaviour
 
     private void OnEnable()
     {
+        Debug.Log("[PromptDisplay] Enabled and registering with Interactable.");
         if (interactable == null)
             interactable = GetComponent<Interactable>();
 
