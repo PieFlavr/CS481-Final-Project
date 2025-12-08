@@ -12,10 +12,7 @@ public class PromptDisplay : MonoBehaviour
     private static List<PromptDisplay> activePrompts = new List<PromptDisplay>();
 
     [SerializeField] private Interactable interactable;
-    [SerializeField] private Canvas promptCanvasPrefab;
-    
-    private Canvas promptCanvas;
-    private RectTransform promptRect;
+    [SerializeField] private Canvas promptCanvas;
 
     /// <summary>
     /// Globally suppress or enable all prompts (e.g., during pause/menus).
@@ -58,12 +55,6 @@ public class PromptDisplay : MonoBehaviour
 
     private void ShowPrompt()
     {
-        if (promptCanvas == null && promptCanvasPrefab != null)
-        {
-            promptCanvas = Instantiate(promptCanvasPrefab, transform);
-            promptRect = promptCanvas.GetComponent<RectTransform>();
-        }
-
         if (promptCanvas != null)
             promptCanvas.enabled = globalPromptsEnabled;
     }

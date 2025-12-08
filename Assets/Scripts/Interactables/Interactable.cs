@@ -11,9 +11,7 @@ public abstract class Interactable : MonoBehaviour
 {
     #region Fields And Properties
 
-    [SerializeField] private float proximityRange = 2f;
-    [Tooltip("Optional: if assigned, uses this collider for proximity checks. Otherwise gets component on Start.")]
-    [SerializeField] private Collider2D triggerCollider;
+    [SerializeField] private Collider2D proximityCollider;
     [Tooltip("Text displayed in the interaction prompt when target is in range.")]
     [SerializeField] private string interactionPrompt = "Interact";
 
@@ -33,11 +31,13 @@ public abstract class Interactable : MonoBehaviour
 
     protected virtual void Start()
     {
-        if (triggerCollider == null)
-            triggerCollider = GetComponent<Collider2D>();
+        if (proximityCollider == null)
+            proximityCollider = GetComponent<Collider2D>();
 
-        if (triggerCollider == null)
+        if (proximityCollider == null)
             Debug.LogWarning($"[Interactable] {gameObject.name} has no Collider2D assigned or found on Start.", gameObject);
+        else if (!proximityCollider.isTrigger)
+            Debug.LogWarning($"[Interactable] {gameObject.name}'s Collider2D is not set as a trigger. Set it to trigger for proximity detection.", gameObject);
     }
 
     protected virtual void OnEnable()
@@ -62,11 +62,21 @@ public abstract class Interactable : MonoBehaviour
     /// </summary>
     public virtual void CheckProximity(Transform targetTransform)
     {
-        if (targetTransform == null || !IsValidTarget(targetTransform)) return;
+        if (targetTransform == null || proximityCollider == null || !IsValidTarget(targetTransform))
+        {
+            UpdateProximityState(false);
+            return;
+        }
 
-        float distance = Vector2.Distance(transform.position, targetTransform.position);
-        bool inRange = distance <= proximityRange;
+        Collider2D targetCollider = targetTransform.GetComponent<Collider2D>();
+        if (targetCollider == null)
+        {
+            UpdateProximityState(false);
+            return;
+        }
 
+        // Check if target collider overlaps or is touching proximity collider
+        bool inRange = proximityCollider.IsTouching(targetCollider) || Physics2D.GetContacts(proximityCollider, new Collider2D[1]) > 0;
         UpdateProximityState(inRange);
     }
 
