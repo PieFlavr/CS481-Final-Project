@@ -57,11 +57,16 @@ public class SwarmSpawner : MonoBehaviour
     #region Night Lifecycle
     /// <summary>
     /// Called by NightManager when the night begins.
-    /// Learner can hook here to configure swarm behavior.
+    /// Spawns configured archetype waves from all registered spawners.
     /// </summary>
     public virtual void OnNightStart()
     {
-        // Default: nothing. Override in subclasses or use events.
+        foreach (var spawner in entitySpawners)
+        {
+            if (spawner != null)
+                spawner.SpawnWave();
+        }
+        Debug.Log($"[SwarmSpawner] Night started - spawned waves from {entitySpawners.Count} spawners.");
     }
 
     /// <summary>

@@ -126,7 +126,7 @@ public class NightManager : MonoBehaviour
 
     /// <summary>
     /// End the current night immediately.
-    /// Notifies all swarm spawners to clean up.
+    /// Notifies all swarm spawners to clean up and despawns all enemies via EntityManager.
     /// </summary>
     public void EndNight()
     {
@@ -143,6 +143,15 @@ public class NightManager : MonoBehaviour
         {
             swarmSpawner?.OnNightEnd();
         }
+
+        // Despawn all enemies via EntityManager
+        var allEnemies = EntityManager.Instance.GetAllEnemies();
+        foreach (var enemy in allEnemies)
+        {
+            if (enemy != null)
+                Destroy(enemy.gameObject);
+        }
+        Debug.Log($"[NightManager] Despawned {allEnemies.Count} enemies.");
 
         OnNightEnd?.Invoke();
         Debug.Log("[NightManager] Night ended.");
