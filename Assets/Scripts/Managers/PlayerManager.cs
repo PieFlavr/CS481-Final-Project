@@ -8,7 +8,10 @@ public class PlayerManager : MonoBehaviour
     [SerializeField] private PlayerEntity player;
 
     public static event Action PlayerDied;
+    public static event Action PlayerWon;
     private bool playerDead = false;
+    private bool playerWon = false;
+    private bool hasSeenEnemies = false;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Awake()
     {
@@ -43,6 +46,8 @@ public class PlayerManager : MonoBehaviour
 
             }
         }
+
+        Restart();
     }
 
     // Update is called once per frame
@@ -57,25 +62,47 @@ public class PlayerManager : MonoBehaviour
                 {
                     this.playerDead = true;
                     Time.timeScale = 0.0f;
+                    player.Stats.ResetHealth();
                     PlayerDied?.Invoke();
                 }
-                else
-                {
-                    this.playerDead = false;
-                    player.Stats.ResetHealth();
-                }
             }
+
+            CheckForWinCondition();
         }
     }
 
     public void Restart()
     {
         this.playerDead = false;
+        this.playerWon = false;
+        this.hasSeenEnemies = false;
     }
 
     public bool GetPlayerDead()
     {
         return this.playerDead;
+    }
+
+    private void CheckForWinCondition()
+    {
+        if (playerWon || playerDead) return;
+        if (EntityManager.Instance == null) return;
+
+        int aliveEnemies = EntityManager.Instance.GetEntityCount(EntityType.Enemy);
+
+        if (aliveEnemies > 0)
+        {
+            hasSeenEnemies = true;
+            return;
+        }
+
+        if (!hasSeenEnemies) return; // Avoid false positives before any enemies spawn
+
+        Debug.Log("[PlayerManager] All enemies defeated. Player has won.");
+        playerWon = true;
+        Time.timeScale = 0.0f;
+        PlayerWon?.Invoke();
+        this.Restart();
     }
 
 
