@@ -1177,7 +1177,7 @@ MonoBehaviour:
         IsExposed: 1
         m_IsShared: 1
         m_Value: 2
-    - rid: 2759302683239907897
+    - rid: 2759302683239907901
       type: {class: 'BlackboardVariable`1[[System.Object, mscorlib]]', ns: Unity.Behavior, asm: Unity.Behavior}
       data:
         GUID:
@@ -3236,7 +3236,7 @@ MonoBehaviour:
           m_SerializableType: System.Object, mscorlib, Version=4.0.0.0, Culture=neutral,
             PublicKeyToken=b77a5c561934e089
         LocalValue:
-          rid: 2759302683239907897
+          rid: 2759302683239907901
         LinkedVariable:
           rid: -2
     - rid: 7769077827319366067

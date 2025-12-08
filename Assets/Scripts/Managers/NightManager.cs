@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.UI;
 using System;
 using System.Collections.Generic;
 
@@ -16,6 +17,11 @@ public class NightManager : MonoBehaviour
 
     [Header("Night Configuration")]
     [SerializeField] private float nightDurationSeconds = 300f; // 5 minutes default
+
+    [Header("Screen Overlay")]
+    [SerializeField] private Canvas screenCanvas;
+    [SerializeField] private Color nightColor = new Color(0.1f, 0.2f, 0.4f, 0.5f); // Dark blue with transparency
+    [SerializeField] private Color dayColor = new Color(1f, 1f, 1f, 0f); // Transparent (normal)
 
     [Header("Spawners")]
     [SerializeField] private List<SwarmSpawner> swarmSpawners = new List<SwarmSpawner>();
@@ -114,6 +120,9 @@ public class NightManager : MonoBehaviour
         nightTimer = 0f;
         isNightActive = true;
 
+        // Apply night overlay
+        ApplyScreenOverlay(nightColor);
+
         // Notify all swarm spawners
         foreach (var swarmSpawner in swarmSpawners)
         {
@@ -137,6 +146,9 @@ public class NightManager : MonoBehaviour
         }
 
         isNightActive = false;
+
+        // Apply day overlay
+        ApplyScreenOverlay(dayColor);
 
         // Notify all swarm spawners
         foreach (var swarmSpawner in swarmSpawners)
@@ -185,5 +197,30 @@ public class NightManager : MonoBehaviour
     }
 
     #endregion Night Control
+
+    #region Screen Overlay
+
+    /// <summary>
+    /// Apply screen overlay color via canvas.
+    /// </summary>
+    private void ApplyScreenOverlay(Color color)
+    {
+        if (screenCanvas == null)
+        {
+            Debug.LogWarning("[NightManager] Screen canvas not assigned!", gameObject);
+            return;
+        }
+
+        Image overlay = screenCanvas.GetComponent<Image>();
+        if (overlay == null)
+        {
+            overlay = screenCanvas.gameObject.AddComponent<Image>();
+        }
+
+        overlay.color = color;
+        Debug.Log($"[NightManager] Screen overlay applied: {color}");
+    }
+
+    #endregion Screen Overlay
 
 }
