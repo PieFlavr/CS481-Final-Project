@@ -23,6 +23,11 @@ public class Player : PlayerEntity
         Stats?.ResetHealth();
     }
 
+    // Base Die() destroys the GameObject; don't destroy the player when dead.
+    public override void Die()
+    {
+    }
+
     // Keep Awake/Start behavior minimal; PlayerEntity/ BaseEntity handle registration and initialization.
     protected override void Awake()
     {

@@ -11,7 +11,7 @@ public class InputManager : MonoBehaviour
 {
     #region Fields and Properties
     public static InputManager Instance { get; private set; }
-    
+
     private InputSystem_Actions inputActions;
     [SerializeField, Min(0f)] private float attackDuration = 0.3f;
     private Coroutine attackRoutine;
@@ -28,7 +28,7 @@ public class InputManager : MonoBehaviour
     // Public Properties
     public Vector2 MoveInput { get; private set; }
     public Vector2 LookDirection { get; private set; }
-    
+
     // Animation Variables
     public float X { get; private set; }
     public float Y { get; private set; }
@@ -39,7 +39,7 @@ public class InputManager : MonoBehaviour
 
     // Rebinding
     //private const string RebindsKey = "InputRebinds"; //TODO: Implement input rebinding system. -L
-    
+
     // Frame Gating
 
     // NOTE (L): This is evil and stupid.
@@ -55,7 +55,7 @@ public class InputManager : MonoBehaviour
         if (Instance != null && Instance != this)
         {
             Debug.LogWarning("[InputManager] Duplicate instance detected -- annihilating it now!");
-            if(gameObject != null) 
+            if (gameObject != null)
             {
                 Destroy(gameObject);
             }
@@ -77,8 +77,8 @@ public class InputManager : MonoBehaviour
         pauseBackConflictThisFrame = false;
     }
 
-    private void OnEnable() => inputActions.Enable();
-    private void OnDisable() => inputActions.Disable();
+    private void OnEnable() => inputActions?.Enable();
+    private void OnDisable() => inputActions?.Disable();
     #endregion Unity Methods
 
     #region Input Subscriptions
@@ -168,11 +168,14 @@ public class InputManager : MonoBehaviour
     /// </summary>
     private void UpdateMouseLookDirection()
     {
+        if (Camera.main == null)
+            return;
+
         Vector2 mouseScreenPos = Pointer.current.position.ReadValue();
         Vector3 mousePos = mouseScreenPos;
         mousePos.z = 10f; // Distance from camera
         Vector3 worldMousePos = Camera.main.ScreenToWorldPoint(mousePos);
-        
+
         // Calculate direction from character to mouse
         LookDirection = (worldMousePos - Camera.main.transform.position).normalized;
 
@@ -239,10 +242,10 @@ public class InputManager : MonoBehaviour
         }
         OnBack?.Invoke();
     }
-    
+
     #endregion
 
-    
+
 
     #region Coroutines
     private IEnumerator AttackRoutine()
@@ -262,7 +265,8 @@ public class InputManager : MonoBehaviour
     #region Cleanup
     private void OnDestroy()
     {
-        if(inputActions != null) {
+        if (inputActions != null)
+        {
             inputActions.Player.Interact.performed -= context => OnInteract?.Invoke();
             inputActions.Player.Pause.performed -= context => OnPausePerformed(context);
             inputActions.Player.Move.performed += context => OnMoveAction(context);

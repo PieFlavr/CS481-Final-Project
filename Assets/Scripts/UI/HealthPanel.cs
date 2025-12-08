@@ -34,6 +34,10 @@ public class HealthBarPanel : UIPanel
 
     private void Update()
     {
+        // Check if player is no longer valid (scene reload)
+        if (playerStats == null)
+            isConnectedToPlayer = false;
+
         // Keep trying to find player until connected
         if (!isConnectedToPlayer)
         {
@@ -44,7 +48,7 @@ public class HealthBarPanel : UIPanel
     private void FindAndSubscribeToPlayer()
     {
         if (isConnectedToPlayer) return; // Already connected
-        
+
         var player = FindAnyObjectByType<Player>();
         if (player != null)
         {
@@ -56,10 +60,10 @@ public class HealthBarPanel : UIPanel
                 // Subscribe to health changes
                 playerStats.OnHealthPercentChanged += UpdateHealthDisplay;
                 playerStats.OnHealthChanged += OnHealthChanged;
-                
+
                 // Initialize display
                 UpdateHealthDisplay(playerStats.GetHealthPercent());
-                
+
                 isConnectedToPlayer = true;
                 Debug.Log("[HealthBarPanel] Successfully connected to player!");
             }
@@ -82,15 +86,15 @@ public class HealthBarPanel : UIPanel
     private void UpdateHealthDisplay(float healthPercent)
     {
         Debug.Log($"[HealthBarPanel] Updating health display: {healthPercent:P0}");
-        
+
         // Update fill amount
         if (healthBarFill != null)
         {
             healthBarFill.fillAmount = healthPercent;
-            
+
             // Change color based on health
-            healthBarFill.color = healthPercent <= lowHealthThreshold 
-                ? lowHealthColor 
+            healthBarFill.color = healthPercent <= lowHealthThreshold
+                ? lowHealthColor
                 : Color.Lerp(lowHealthColor, fullHealthColor, (healthPercent - lowHealthThreshold) / (1f - lowHealthThreshold));
         }
         else

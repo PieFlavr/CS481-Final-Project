@@ -1,10 +1,13 @@
+using System;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class PlayerManager : MonoBehaviour
 {
-    public static PlayerManager Instance {get; private set;}
+    public static PlayerManager Instance { get; private set; }
     [SerializeField] private PlayerEntity player;
+
+    public static event Action PlayerDied;
     private bool playerDead = false;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Awake()
@@ -49,11 +52,12 @@ public class PlayerManager : MonoBehaviour
         {
             if (player.Stats != null && player.Stats.IsDead())
             {
-                Debug.Log("[PlayerManager] Player has died, reloading start scene.");
+                Debug.Log("[PlayerManager] Player has died.");
                 if (!this.playerDead)
                 {
                     this.playerDead = true;
-                    SceneManager.LoadScene("StartScene");
+                    Time.timeScale = 0.0f;
+                    PlayerDied?.Invoke();
                 }
                 else
                 {
@@ -64,15 +68,15 @@ public class PlayerManager : MonoBehaviour
         }
     }
 
-    public void Restart() 
+    public void Restart()
     {
         this.playerDead = false;
     }
 
-    public bool GetPlayerDead() 
+    public bool GetPlayerDead()
     {
         return this.playerDead;
     }
 
-    
+
 }

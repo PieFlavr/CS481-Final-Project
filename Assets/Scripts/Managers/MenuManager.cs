@@ -6,7 +6,7 @@ public class MenuManager : MonoBehaviour
     public void StartGame()
     {
         // Load the first game scene (adjust the scene name or index as needed)
-        SceneManager.LoadScene("StartScene");
+        SceneManager.LoadScene("Level1");
     }
 
     public void QuitGame()

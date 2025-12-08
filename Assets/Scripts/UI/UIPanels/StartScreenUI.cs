@@ -9,37 +9,37 @@ public class StartScreenUI : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        
+
     }
 
     // Update is called once per frame
     void Update()
     {
-        if(UIMgr.IsPanelOpen("StartPanel")) {
-            if(SceneManager.GetActiveScene().name != "StartScene") {
-                UIMgr.ClosePanel("StartPanel");
-            }
-            else if(!start) {
-                UIMgr.ClosePanel("StartPanel");
-            }
-        }
-        else if(SceneManager.GetActiveScene().name == "StartScene" && start) {
-            UIMgr.OpenPanel("StartPanel");
-        }
-        if(UIMgr.IsPanelOpen("EndPanel")) {
-            if(SceneManager.GetActiveScene().name != "StartScene") {
-                UIMgr.ClosePanel("EndPanel");
-            }
-            else if(start) {
-                UIMgr.ClosePanel("EndPanel");
-            }
-        }
-        else if(SceneManager.GetActiveScene().name == "StartScene" && !start) {
-            UIMgr.OpenPanel("EndPanel");
-        }
+        // if(UIMgr.IsPanelOpen("StartPanel")) {
+        //     if(SceneManager.GetActiveScene().name != "StartScene") {
+        //         UIMgr.ClosePanel("StartPanel");
+        //     }
+        //     else if(!start) {
+        //         UIMgr.ClosePanel("StartPanel");
+        //     }
+        // }
+        // else if(SceneManager.GetActiveScene().name == "StartScene" && start) {
+        //     UIMgr.OpenPanel("StartPanel");
+        // }
+        // if(UIMgr.IsPanelOpen("EndPanel")) {
+        //     if(SceneManager.GetActiveScene().name != "StartScene") {
+        //         UIMgr.ClosePanel("EndPanel");
+        //     }
+        //     else if(start) {
+        //         UIMgr.ClosePanel("EndPanel");
+        //     }
+        // }
+        // else if(SceneManager.GetActiveScene().name == "StartScene" && !start) {
+        //     UIMgr.OpenPanel("EndPanel");
+        // }
     }
 
-    public void OnStartButtonClick() 
+    public void OnStartButtonClick()
     {
         Debug.Log("Clicks start button");
         UIMgr.ClosePanel("StartPanel");
@@ -47,7 +47,7 @@ public class StartScreenUI : MonoBehaviour
         SceneManager.LoadScene("Level1");
     }
 
-    public void OnEndButtonClick() 
+    public void OnEndButtonClick()
     {
         Debug.Log("Clicks end button");
         UIMgr.ClosePanel("EndPanel");
