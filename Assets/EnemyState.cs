@@ -4,7 +4,8 @@ using Unity.Behavior;
 [BlackboardEnum]
 public enum EnemyState
 {
-    Idle,
+	Idle,
 	Flee,
-	Attack
+	Attack,
+	Seek
 }
